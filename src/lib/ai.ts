@@ -1,0 +1,157 @@
+import "server-only";
+import Anthropic from "@anthropic-ai/sdk";
+import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
+import { z } from "zod";
+import { EXTRA_KINDS, type Lang } from "./types";
+
+const MODEL = process.env.QONAQ_MODEL || "claude-opus-5-5";
+// Fast mode makes the 15-second card possible on stage. Set QONAQ_FAST=0 to turn it off.
+const FAST = process.env.QONAQ_FAST !== "0";
+
+let client: Anthropic | null = null;
+function getClient() {
+  client ??= new Anthropic({ timeout: 45_000, maxRetries: 1 });
+  return client;
+}
+
+export class AiError extends Error {
+  constructor(
+    message: string,
+    public readonly kind: "no_key" | "refused" | "failed",
+  ) {
+    super(message);
+  }
+}
+
+const localized = z.object({ kk: z.string(), ru: z.string(), en: z.string(), zh: z.string() });
+
+const ListingDraftSchema = z.object({
+  hostName: z.string().nullable(),
+  villageSlug: z.string().nullable(),
+  villageName: localized.nullable(),
+  rooms: z.number().int().nullable(),
+  priceKzt: z.number().int().nullable(),
+  priceGuests: z.number().int().nullable(),
+  breakfastIncluded: z.boolean().nullable(),
+  checkIn: z.string().nullable(),
+  extras: z.array(
+    z.object({
+      kind: z.enum(EXTRA_KINDS),
+      priceKzt: z.number().int().nullable(),
+      name: localized,
+    }),
+  ),
+  content: z.object({
+    kk: z.object({ title: z.string(), description: z.string(), rules: z.string() }),
+    ru: z.object({ title: z.string(), description: z.string(), rules: z.string() }),
+    en: z.object({ title: z.string(), description: z.string(), rules: z.string() }),
+    zh: z.object({ title: z.string(), description: z.string(), rules: z.string() }),
+  }),
+  missing: z.array(z.string()),
+});
+export type ListingDraft = z.infer<typeof ListingDraftSchema>;
+
+const GLOSSARY = `Place names (use these exact forms):
+- Саты / Saty → kk "Саты", en "Saty", zh "萨特村"
+- Кольсай / Колсай / Қолсай → en "Kolsai Lakes", zh "科尔赛湖"
+- Каинды / Қайыңды → en "Kaindy Lake", zh "凯恩迪湖"
+- Кеген → en "Kegen", zh "凯根"
+- Боровое / Бурабай → en "Burabay", zh "布拉拜"
+- Алматы → en "Almaty", zh "阿拉木图"
+- баня / монша → en "Russian-style sauna (banya)", zh "俄式桑拿浴"
+- тенге / теңге → en "tenge (₸)", zh "坚戈"`;
+
+const LISTING_SYSTEM = `You turn a rural guesthouse host's spoken description (Kazakh or Russian, transcribed by a phone, may have recognition errors) into a listing card for foreign tourists.
+
+Rules:
+- Use only facts the host said. Never invent amenities, distances, views or prices. If something is not said, use null and add the field name to "missing".
+- Numbers spoken as words become integers: "он бес мың" / "пятнадцать тысяч" → 15000. Prices are in tenge.
+- priceKzt is the price per night for the room as described; priceGuests is how many people that price covers.
+- checkIn is "HH:MM" 24h ("после двух" / "екіден кейін" → "14:00").
+- extras: paid or free extra services the host offers (sauna/banya, car or transfer, meals, horses, guide).
+- villageSlug: lowercase latin slug of the village (e.g. "saty", "burabay"); villageName in all four languages.
+- content: for each language a title, a 2–3 sentence description and the house rules line ("" if none said).
+  - title: "<Host name>'s guesthouse in <village>" style, natural in each language (zh e.g. "叶尔兰之家 · 萨特村").
+  - Warm and plain. No exclamation marks, no superlatives, no emoji.
+  - kk is Kazakh in Cyrillic; zh is Simplified Chinese; prices inside text use tenge.
+${GLOSSARY}`;
+
+/** Spoken or typed host description → structured card in kk/ru/en/zh. */
+export async function draftListing(input: { text: string; lang: Lang; villageHint?: string }): Promise<ListingDraft> {
+  if (!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN) {
+    throw new AiError("ANTHROPIC_API_KEY is not set", "no_key");
+  }
+  const hint = input.villageHint ? `\nThe host chose the village "${input.villageHint}" in the form.` : "";
+  try {
+    const response = await getClient().beta.messages.parse({
+      model: MODEL,
+      max_tokens: 6000,
+      ...(FAST ? { speed: "fast" as const } : {}),
+      betas: ["server-side-fallback-2026-07-01"],
+      fallbacks: "default",
+      output_config: { effort: "low", format: betaZodOutputFormat(ListingDraftSchema) },
+      system: LISTING_SYSTEM,
+      messages: [
+        {
+          role: "user",
+          content: `Host's words (${input.lang === "kk" ? "Kazakh" : "Russian"}):\n"""${input.text.slice(0, 4000)}"""${hint}`,
+        },
+      ],
+    });
+    if (response.stop_reason === "refusal") throw new AiError("refused", "refused");
+    if (!response.parsed_output) throw new AiError(`no parsed output (stop: ${response.stop_reason})`, "failed");
+    return response.parsed_output;
+  } catch (err) {
+    if (err instanceof AiError) throw err;
+    throw new AiError(describe(err), "failed");
+  }
+}
+
+const TranslationSchema = z.object({
+  detectedLang: z.enum(["kk", "ru", "en", "zh", "other"]),
+  translations: localized,
+});
+export type Translation = z.infer<typeof TranslationSchema>;
+
+const TRANSLATE_SYSTEM = `You translate short messages between a foreign tourist and a rural guesthouse host in Kazakhstan.
+Return the message in Kazakh (Cyrillic), Russian, English and Simplified Chinese.
+Keep the meaning, tone and every number, date and price exactly. Do not add greetings or anything that was not said.
+Detect the language of the original; if it is one of kk/ru/en/zh, copy the original unchanged into that slot.
+${GLOSSARY}`;
+
+/** Short message → all four languages. Used for guest questions and host replies. */
+export async function translateMessage(text: string, context?: string): Promise<Translation> {
+  if (!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN) {
+    throw new AiError("ANTHROPIC_API_KEY is not set", "no_key");
+  }
+  try {
+    const response = await getClient().beta.messages.parse({
+      model: MODEL,
+      max_tokens: 2000,
+      ...(FAST ? { speed: "fast" as const } : {}),
+      betas: ["server-side-fallback-2026-07-01"],
+      fallbacks: "default",
+      output_config: { effort: "low", format: betaZodOutputFormat(TranslationSchema) },
+      system: TRANSLATE_SYSTEM,
+      messages: [
+        {
+          role: "user",
+          content: `${context ? `Context: ${context}\n` : ""}Message:\n"""${text.slice(0, 2000)}"""`,
+        },
+      ],
+    });
+    if (response.stop_reason === "refusal") throw new AiError("refused", "refused");
+    if (!response.parsed_output) throw new AiError(`no parsed output (stop: ${response.stop_reason})`, "failed");
+    return response.parsed_output;
+  } catch (err) {
+    if (err instanceof AiError) throw err;
+    throw new AiError(describe(err), "failed");
+  }
+}
+
+function describe(err: unknown): string {
+  if (err instanceof Anthropic.AuthenticationError) return "Invalid Anthropic API key";
+  if (err instanceof Anthropic.RateLimitError) return "Rate limited by Anthropic API";
+  if (err instanceof Anthropic.APIError) return `Anthropic API error ${err.status}: ${err.message}`;
+  return err instanceof Error ? err.message : String(err);
+}

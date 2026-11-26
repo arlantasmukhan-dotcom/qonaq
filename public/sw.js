@@ -10,7 +10,7 @@
  *
  * Bump VERSION to invalidate every cache.
  */
-const VERSION = "v1";
+const VERSION = "v2";
 const PAGES = `qonaq-pages-${VERSION}`;
 const ASSETS = `qonaq-assets-${VERSION}`;
 const API = `qonaq-api-${VERSION}`;
@@ -52,7 +52,10 @@ async function networkFirst(request, cacheName, offlineFallback) {
   const cached = await cache.match(request, MATCH);
   try {
     const res = cached ? await fetchWithTimeout(request, NETWORK_TIMEOUT_MS) : await fetch(request);
-    if (res.ok) await cache.put(request, res.clone());
+    if (res.ok) {
+      await cache.put(request, res.clone());
+      if (cacheName === PAGES) cacheAssetsOf(await res.clone().text()).catch(() => {});
+    }
     // 404/500 with a good cached copy: prefer the copy.
     if (!res.ok && cached) return cached;
     return res;
@@ -77,18 +80,17 @@ async function cacheFirst(request, cacheName) {
 
 // ---------- lifecycle ----------
 
-async function precacheOffline() {
-  const cache = await caches.open(PAGES);
-  const res = await fetch(OFFLINE_URL, { cache: "reload" });
-  if (!res.ok) return;
-  const html = await res.clone().text();
-  await cache.put(OFFLINE_URL, res);
-  // The offline page must look right without a network: cache the CSS/JS it references.
+/**
+ * A cached page is useless offline without its own JS/CSS chunks (a page never opened directly,
+ * like /driver, references chunks the browser has not loaded yet). Cache everything it references.
+ */
+async function cacheAssetsOf(html) {
   const assets = new Set(html.match(/\/_next\/static\/[^"'\\\s)<>]+/g) || []);
   const assetCache = await caches.open(ASSETS);
   await Promise.all(
     [...assets].map(async (u) => {
       try {
+        if (await assetCache.match(u, MATCH)) return;
         const r = await fetch(u);
         if (r.ok) await assetCache.put(u, r);
       } catch {
@@ -96,6 +98,16 @@ async function precacheOffline() {
       }
     }),
   );
+}
+
+async function precacheOffline() {
+  const cache = await caches.open(PAGES);
+  const res = await fetch(OFFLINE_URL, { cache: "reload" });
+  if (!res.ok) return;
+  const html = await res.clone().text();
+  await cache.put(OFFLINE_URL, res);
+  await cacheAssetsOf(html);
+  const assetCache = await caches.open(ASSETS);
   await assetCache.add("/icon.svg").catch(() => {});
 }
 
@@ -174,6 +186,7 @@ async function warm(urls) {
         if (a.kind === "photo" && (await cache.match(key, MATCH))) return true;
         const res = await fetch(req);
         if (!res.ok) return !!(await cache.match(key, MATCH));
+        if (a.kind === "page") await cacheAssetsOf(await res.clone().text());
         await cache.put(key, res);
         return true;
       } catch {

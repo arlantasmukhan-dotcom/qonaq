@@ -9,6 +9,7 @@ export const listings = sqliteTable(
     village: text("village").notNull(),
     villageName: text("village_name", { mode: "json" }).$type<Localized>().notNull(),
     hostName: text("host_name").notNull(),
+    hostNames: text("host_names", { mode: "json" }).$type<Localized>(),
     whatsapp: text("whatsapp").notNull(),
     sourceLang: text("source_lang").$type<Lang>().notNull(),
     status: text("status").$type<"draft" | "published">().notNull(),
@@ -83,10 +84,13 @@ export const events = sqliteTable("events", {
 });
 
 /** Plain SQL so a fresh database (local file or Turso) is ready without a migration step. */
+/** Columns added after the first release; each is applied once and ignored if present. */
+export const ALTER_SQL = [`ALTER TABLE listings ADD COLUMN host_names TEXT`];
+
 export const CREATE_SQL = [
   `CREATE TABLE IF NOT EXISTS listings (
     id TEXT PRIMARY KEY, slug TEXT NOT NULL, village TEXT NOT NULL, village_name TEXT NOT NULL,
-    host_name TEXT NOT NULL, whatsapp TEXT NOT NULL, source_lang TEXT NOT NULL, status TEXT NOT NULL,
+    host_name TEXT NOT NULL, host_names TEXT, whatsapp TEXT NOT NULL, source_lang TEXT NOT NULL, status TEXT NOT NULL,
     rooms INTEGER, price_kzt INTEGER, price_guests INTEGER, breakfast_included INTEGER, check_in TEXT,
     extras TEXT NOT NULL, lat REAL, lng REAL, content TEXT NOT NULL, photo_ids TEXT NOT NULL,
     edit_token TEXT NOT NULL, is_demo INTEGER NOT NULL, created_at INTEGER NOT NULL)`,

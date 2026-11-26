@@ -1,0 +1,63 @@
+.ld-bubble {
+  opacity: 0;
+  animation-duration: 9s;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation-fill-mode: both;
+}
+.ld-b1 { animation-name: ld-b1; }
+.ld-b2 { animation-name: ld-b2; }
+.ld-b3 { animation-name: ld-b3; }
+
+@keyframes ld-b1 {
+  0%, 5% { opacity: 0; transform: translateY(12px) scale(0.98); }
+  11%, 90% { opacity: 1; transform: none; }
+  97%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes ld-b2 {
+  0%, 17% { opacity: 0; transform: translateY(12px) scale(0.98); }
+  23%, 90% { opacity: 1; transform: none; }
+  97%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes ld-b3 {
+  0%, 29% { opacity: 0; transform: translateY(12px) scale(0.98); }
+  35%, 90% { opacity: 1; transform: none; }
+  97%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+
+.ld-wave span {
+  display: block;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--color-saffron);
+  height: 6px;
+  animation: ld-wave 1s ease-in-out infinite;
+}
+.ld-wave span:nth-child(2) { animation-delay: 0.12s; }
+.ld-wave span:nth-child(3) { animation-delay: 0.24s; }
+.ld-wave span:nth-child(4) { animation-delay: 0.36s; }
+.ld-wave span:nth-child(5) { animation-delay: 0.48s; }
+@keyframes ld-wave {
+  0%, 100% { height: 6px; }
+  50% { height: 22px; }
+}
+
+.ld-flow {
+  stroke-dasharray: 4 6;
+  animation: ld-flow 1.2s linear infinite;
+}
+@keyframes ld-flow {
+  to { stroke-dashoffset: -20; }
+}
+
+.ld-float { animation: ld-float 6s ease-in-out infinite; }
+@keyframes ld-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ld-bubble { animation: none; opacity: 1; transform: none; }
+  .ld-wave span { animation: none; height: 14px; }
+  .ld-flow, .ld-float { animation: none; }
+}

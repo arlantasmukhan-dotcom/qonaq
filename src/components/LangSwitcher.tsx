@@ -5,6 +5,10 @@ import { useTransition } from "react";
 import { LANG_COOKIE, LANG_SHORT } from "@/lib/lang";
 import { LANGS, type Lang } from "@/lib/types";
 
+function saveLangCookie(lang: Lang) {
+  document.cookie = `${LANG_COOKIE}=${lang}; path=/; max-age=31536000; samesite=lax`;
+}
+
 /** Compact language switcher. Stores the choice in a cookie and re-renders the page. */
 export function LangSwitcher({
   current,
@@ -19,7 +23,7 @@ export function LangSwitcher({
   const [pending, start] = useTransition();
 
   function pick(lang: Lang) {
-    document.cookie = `${LANG_COOKIE}=${lang}; path=/; max-age=31536000; samesite=lax`;
+    saveLangCookie(lang);
     start(() => router.refresh());
   }
 

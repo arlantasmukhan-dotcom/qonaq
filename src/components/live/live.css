@@ -1,0 +1,89 @@
+.lv-screen {
+  background:
+    radial-gradient(1200px 700px at 85% -10%, rgb(232 163 61 / 0.16), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgb(47 143 91 / 0.16), transparent 60%),
+    linear-gradient(160deg, #0b4447 0%, #07282a 100%);
+}
+
+/* New events push older ones down smoothly: grid row animates 0fr -> 1fr. */
+.lv-enter {
+  display: grid;
+  grid-template-rows: 0fr;
+  animation: lv-expand 700ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.lv-enterNow {
+  grid-template-rows: 1fr;
+  animation: none;
+}
+.lv-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+.lv-card {
+  animation: lv-slideIn 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes lv-expand {
+  to { grid-template-rows: 1fr; }
+}
+@keyframes lv-slideIn {
+  from { opacity: 0; transform: translateX(48px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+.lv-pop { animation: lv-pop 450ms cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+@keyframes lv-pop {
+  0% { transform: scale(0.7); opacity: 0.2; }
+  100% { transform: none; opacity: 1; }
+}
+
+.lv-fade { animation: lv-fade 700ms ease both; }
+@keyframes lv-fade {
+  from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
+.lv-caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.08em;
+  height: 0.95em;
+  margin-left: 0.08em;
+  vertical-align: -0.1em;
+  background: var(--color-saffron);
+  animation: lv-blink 0.8s steps(1) infinite;
+}
+@keyframes lv-blink { 50% { opacity: 0; } }
+
+.lv-beam {
+  background: linear-gradient(90deg, transparent, var(--color-saffron), transparent);
+  background-size: 200% 100%;
+  animation: lv-beam 1.6s linear infinite;
+}
+@keyframes lv-beam {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.lv-fadeOut {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+}
+
+.lv-live::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: currentColor;
+  animation: lv-ping 1.6s ease-out infinite;
+}
+@keyframes lv-ping {
+  from { transform: scale(1); opacity: 0.6; }
+  to { transform: scale(3); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lv-enter { animation: none; grid-template-rows: 1fr; }
+  .lv-card, .lv-pop, .lv-fade { animation: none; }
+  .lv-caret::after, .lv-beam, .lv-live::before { animation: none; }
+}

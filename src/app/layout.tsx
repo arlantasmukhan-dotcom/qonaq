@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
+import { OfflineKit } from "@/components/OfflineKit";
 import { getLang } from "@/i18n/server";
 import "./globals.css";
 
@@ -26,7 +27,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const lang = await getLang();
   return (
     <html lang={lang === "zh" ? "zh-CN" : lang} className={`${manrope.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <OfflineKit />
+        {children}
+      </body>
     </html>
   );
 }

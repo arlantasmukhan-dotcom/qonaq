@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 /* Minimal typings for the Web Speech API (not in lib.dom for every TS version). */
 interface SpeechRecognitionResultLike {
@@ -30,6 +30,8 @@ function getCtor(): Ctor | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 }
 
+const noopSubscribe = () => () => {};
+
 export type SpeechLang = "kk-KZ" | "ru-RU" | "en-US" | "zh-CN";
 
 /**
@@ -38,7 +40,8 @@ export type SpeechLang = "kk-KZ" | "ru-RU" | "en-US" | "zh-CN";
  * `error` is "not-allowed" when the microphone permission is denied.
  */
 export function useSpeech(lang: SpeechLang) {
-  const [supported, setSupported] = useState(false);
+  // Feature detection without a setState-in-effect: false on the server, real value in the browser.
+  const supported = useSyncExternalStore(noopSubscribe, () => getCtor() !== null, () => false);
   const [listening, setListening] = useState(false);
   const [text, setText] = useState("");
   const [interim, setInterim] = useState("");
@@ -47,7 +50,6 @@ export function useSpeech(lang: SpeechLang) {
   const wantOn = useRef(false);
 
   useEffect(() => {
-    setSupported(getCtor() !== null);
     return () => {
       wantOn.current = false;
       rec.current?.abort();

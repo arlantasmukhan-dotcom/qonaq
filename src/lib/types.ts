@@ -25,6 +25,8 @@ export interface Listing {
   village: string; // url slug, e.g. "saty"
   villageName: Localized;
   hostName: string;
+  /** Host name written for each language (e.g. 叶尔兰 for Ерлан); null for older rows. */
+  hostNames: Localized | null;
   whatsapp: string; // digits only, international, e.g. "77011234567"
   sourceLang: Lang;
   status: "draft" | "published";

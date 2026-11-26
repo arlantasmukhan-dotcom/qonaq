@@ -9,6 +9,7 @@ interface SeedListing {
   id: string;
   slug: string;
   hostName: string;
+  hostNames: Localized;
   whatsapp: string;
   rooms: number;
   priceKzt: number;
@@ -34,6 +35,7 @@ export const SEED_LISTINGS: SeedListing[] = [
     id: "0b6f0b8e-0001-4c1a-9a00-5a7e00000001",
     slug: "erlan",
     hostName: "Ерлан",
+    hostNames: name("Ерлан", "Ерлан", "Erlan", "叶尔兰"),
     whatsapp: "77000000001",
     rooms: 4,
     priceKzt: 15000,
@@ -75,6 +77,7 @@ export const SEED_LISTINGS: SeedListing[] = [
     id: "0b6f0b8e-0002-4c1a-9a00-5a7e00000002",
     slug: "aigul",
     hostName: "Айгүл",
+    hostNames: name("Айгүл", "Айгуль", "Aigul", "艾古丽"),
     whatsapp: "77000000002",
     rooms: 3,
     priceKzt: 12000,
@@ -116,6 +119,7 @@ export const SEED_LISTINGS: SeedListing[] = [
     id: "0b6f0b8e-0003-4c1a-9a00-5a7e00000003",
     slug: "nurlan",
     hostName: "Нұрлан",
+    hostNames: name("Нұрлан", "Нурлан", "Nurlan", "努尔兰"),
     whatsapp: "77000000003",
     rooms: 5,
     priceKzt: 18000,
@@ -157,6 +161,7 @@ export const SEED_LISTINGS: SeedListing[] = [
     id: "0b6f0b8e-0004-4c1a-9a00-5a7e00000004",
     slug: "gulnar",
     hostName: "Гүлнар",
+    hostNames: name("Гүлнар", "Гульнар", "Gulnar", "古丽娜尔"),
     whatsapp: "77000000004",
     rooms: 2,
     priceKzt: 10000,
@@ -197,6 +202,7 @@ export const SEED_LISTINGS: SeedListing[] = [
     id: "0b6f0b8e-0005-4c1a-9a00-5a7e00000005",
     slug: "bauyrzhan",
     hostName: "Бауыржан",
+    hostNames: name("Бауыржан", "Бауыржан", "Bauyrzhan", "包尔江"),
     whatsapp: "77000000005",
     rooms: 3,
     priceKzt: 14000,

@@ -52,6 +52,7 @@ export async function POST(req: NextRequest) {
     village,
     villageName: draft.villageName ?? { kk: villageTitle, ru: villageTitle, en: villageTitle, zh: villageTitle },
     hostName,
+    hostNames: draft.hostName ? draft.hostNames : null,
     whatsapp,
     sourceLang: body.lang,
     status: "draft",

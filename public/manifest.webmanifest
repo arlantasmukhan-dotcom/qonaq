@@ -1,0 +1,15 @@
+{
+  "name": "Qonaq",
+  "short_name": "Qonaq",
+  "description": "Guesthouses of Kazakhstan in your language",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0f5e63",
+  "background_color": "#f6efe4",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

@@ -17,6 +17,7 @@ function init() {
   const db = drizzle(client, { schema });
   const ready = (async () => {
     for (const sql of schema.CREATE_SQL) await client.execute(sql);
+    for (const sql of schema.ALTER_SQL) await client.execute(sql).catch(() => undefined);
     if (process.env.QONAQ_SEED !== "0") await seedIfEmpty(db);
   })();
   return { db, client, ready };
@@ -43,6 +44,7 @@ async function seedIfEmpty(db: Db) {
       village: SEED_VILLAGE.slug,
       villageName: SEED_VILLAGE.name,
       hostName: l.hostName,
+      hostNames: l.hostNames,
       whatsapp: l.whatsapp,
       sourceLang: "kk",
       status: "published",

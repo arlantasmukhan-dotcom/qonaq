@@ -27,6 +27,7 @@ const localized = z.object({ kk: z.string(), ru: z.string(), en: z.string(), zh:
 
 const ListingDraftSchema = z.object({
   hostName: z.string().nullable(),
+  hostNames: localized.nullable(),
   villageSlug: z.string().nullable(),
   villageName: localized.nullable(),
   rooms: z.number().int().nullable(),
@@ -69,6 +70,7 @@ Rules:
 - priceKzt is the price per night for the room as described; priceGuests is how many people that price covers.
 - checkIn is "HH:MM" 24h ("после двух" / "екіден кейін" → "14:00").
 - extras: paid or free extra services the host offers (sauna/banya, car or transfer, meals, horses, guide).
+- hostNames: the host's name written for each language (kk/ru Cyrillic as said, en Latin transliteration, zh standard Chinese transliteration, e.g. Ерлан → 叶尔兰).
 - villageSlug: lowercase latin slug of the village (e.g. "saty", "burabay"); villageName in all four languages.
 - content: for each language a title, a 2–3 sentence description and the house rules line ("" if none said).
   - title: "<Host name>'s guesthouse in <village>" style, natural in each language (zh e.g. "叶尔兰之家 · 萨特村").

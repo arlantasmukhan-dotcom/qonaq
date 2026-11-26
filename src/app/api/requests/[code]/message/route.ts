@@ -2,7 +2,8 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { translateMessage } from "@/lib/ai";
 import { newId } from "@/lib/codes";
-import { aiFail, fail, json, readJson } from "@/lib/http";
+import { aiFail, clientIp, fail, json, readJson } from "@/lib/http";
+import { allow } from "@/lib/ratelimit";
 import { getRequestByCode, insertMessage, touchRequest } from "@/lib/repo";
 import type { Message } from "@/lib/types";
 
@@ -11,6 +12,9 @@ const Body = z.object({ text: z.string().trim().min(1).max(1000) });
 /** Guest adds a follow-up message on the request page. Response: { message } */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
+  if (!allow(`msg:${code}:${clientIp(req) ?? "?"}`, 10, 10 * 60_000)) {
+    return fail("rate_limited", "Too many messages, try again later", 429);
+  }
   const parsed = Body.safeParse(await readJson(req));
   if (!parsed.success) return fail("bad_request", "Message text is required", 400);
 

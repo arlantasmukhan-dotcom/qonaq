@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Qonaq
 
-## Getting Started
+Сельский хозяин говорит по-казахски или по-русски — турист читает на своём языке.
+Страница гостевого дома голосом за 60 секунд, заявки через WhatsApp, ответ кнопкой, карточка водителя офлайн.
 
-First, run the development server:
+Архитектура и функционал: [docs/superpowers/specs/2026-11-26-qonaq-mvp-design.md](docs/superpowers/specs/2026-11-26-qonaq-mvp-design.md)
+
+## Запуск локально
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # вставьте ANTHROPIC_API_KEY
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+База создаётся сама в `data/qonaq.db` с 5 демо-домами в Саты (помечены «Пример»).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Страницы
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Путь | Кто | Что |
+| --- | --- | --- |
+| `/` | все | главная |
+| `/new` | хозяин | создать страницу голосом |
+| `/new/[id]` | хозяин | проверить карточку и опубликовать |
+| `/host/[id]?t=…` | хозяин | QR, ссылка, плакат, заявки (секретная ссылка хозяина) |
+| `/poster/[id]` | хозяин | плакат A4 для печати |
+| `/saty` | турист | каталог села |
+| `/saty/erlan` | турист | страница дома и заявка |
+| `/saty/erlan/driver` | турист | «Покажите водителю», работает офлайн |
+| `/r/[code]` | турист | статус заявки и ответы хозяина на языке туриста |
+| `/r/[code]?k=…` | хозяин | ответ кнопками «Свободно / Занято / Машина есть» |
+| `/live` | жюри | экран для проектора: QR и живая лента переводов |
 
-## Learn More
+Секретная ссылка хозяина демо-дома: `node scripts/host-link.cjs erlan`
 
-To learn more about Next.js, take a look at the following resources:
+## Проверки
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run typecheck
+npm run lint
+npm test
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Деплой (Vercel + Turso)
 
-## Deploy on Vercel
+1. Turso: создать базу, получить `DATABASE_URL` (`libsql://…`) и `DATABASE_AUTH_TOKEN`.
+2. Vercel: импортировать репозиторий, задать переменные из `.env.example`
+   (`ANTHROPIC_API_KEY`, `DATABASE_URL`, `DATABASE_AUTH_TOKEN`, `PUBLIC_BASE_URL=https://<ваш-домен>`).
+3. Таблицы и демо-дома создаются при первом запросе.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Сценарий демо (60 секунд)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. На проекторе открыт `/live`.
+2. Судья 1 открывает `/new`, наговаривает: «У меня дом в Боровом, 3 комнаты, 20 тысяч за ночь…» → карточка → «Всё верно» → QR.
+3. Судья 2 сканирует QR, видит страницу по-китайски, пишет вопрос, жмёт «联系房东».
+4. На телефоне «хозяина» открывается WhatsApp с заявкой по-русски, на `/live` видно перевод.
+5. Хозяин жмёт «Свободно» — у судьи 2 появляется ответ по-китайски.

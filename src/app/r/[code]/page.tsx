@@ -9,7 +9,7 @@ import type { Lang } from "@/lib/types";
 
 type Props = {
   params: Promise<{ code: string }>;
-  searchParams: Promise<{ k?: string | string[] }>;
+  searchParams: Promise<{ k?: string | string[]; lang?: string | string[] }>;
 };
 
 export const metadata: Metadata = { title: "Qonaq", robots: { index: false } };
@@ -25,10 +25,17 @@ export default async function RequestPage({ params, searchParams }: Props) {
   const k = Array.isArray(sp.k) ? sp.k[0] : sp.k;
   const isHost = safeEqual(k, request.hostKey);
 
-  // Guests read in their own language unless they picked another one; hosts get Russian or Kazakh.
+  // Guests read in the request's language unless they picked another one on this page (?lang=);
+  // hosts get Russian or Kazakh from their own cookie.
   const cookieLang = (await cookies()).get(LANG_COOKIE)?.value;
-  const chosen: Lang | null = isLang(cookieLang) ? cookieLang : null;
-  const lang: Lang = isHost ? (chosen === "kk" ? "kk" : "ru") : (chosen ?? request.guestLang);
+  const queryLang = Array.isArray(sp.lang) ? sp.lang[0] : sp.lang;
+  const lang: Lang = isHost
+    ? cookieLang === "kk"
+      ? "kk"
+      : "ru"
+    : isLang(queryLang)
+      ? queryLang
+      : request.guestLang;
 
   const messages = await listMessages(request.id);
   return (

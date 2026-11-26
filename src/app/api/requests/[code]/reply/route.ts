@@ -75,7 +75,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cod
 
   await insertMessage(message);
   await pushEvent("host_replied", {
-    code: request.code,
     hostName: listing.hostName,
     action: message.action,
     original: message.original,

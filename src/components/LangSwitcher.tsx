@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { LANG_COOKIE, LANG_SHORT } from "@/lib/lang";
 import { LANGS, type Lang } from "@/lib/types";
@@ -9,20 +9,34 @@ function saveLangCookie(lang: Lang) {
   document.cookie = `${LANG_COOKIE}=${lang}; path=/; max-age=31536000; samesite=lax`;
 }
 
-/** Compact language switcher. Stores the choice in a cookie and re-renders the page. */
+/**
+ * Compact language switcher. By default stores the choice in a cookie and re-renders the page.
+ * `via="query"` keeps the choice on this page only (?lang=xx), e.g. the guest's request page,
+ * so a host on the same phone does not change the guest's language.
+ */
 export function LangSwitcher({
   current,
   langs = LANGS,
   tone = "light",
+  via = "cookie",
 }: {
   current: Lang;
   langs?: readonly Lang[];
   tone?: "light" | "dark";
+  via?: "cookie" | "query";
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const search = useSearchParams();
   const [pending, start] = useTransition();
 
   function pick(lang: Lang) {
+    if (via === "query") {
+      const q = new URLSearchParams(search.toString());
+      q.set("lang", lang);
+      start(() => router.replace(`${pathname}?${q.toString()}`, { scroll: false }));
+      return;
+    }
     saveLangCookie(lang);
     start(() => router.refresh());
   }

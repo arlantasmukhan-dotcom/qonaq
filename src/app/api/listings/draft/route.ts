@@ -2,7 +2,8 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { draftListing } from "@/lib/ai";
 import { editToken, newId, slugify } from "@/lib/codes";
-import { aiFail, fail, json, readJson, setEditCookie } from "@/lib/http";
+import { aiFail, clientIp, fail, json, readJson, setEditCookie } from "@/lib/http";
+import { allow } from "@/lib/ratelimit";
 import { attachPhotos, insertListing, slugTaken } from "@/lib/repo";
 import { EXTRA_KINDS, type Extra, type ListingWithSecret } from "@/lib/types";
 
@@ -18,7 +19,12 @@ const Body = z.object({
  * Host's spoken/typed description → draft listing (status "draft").
  * Response: { id, editToken, listing } and an httpOnly edit cookie for this listing.
  */
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
+  if (!allow(`draft:${clientIp(req) ?? "?"}`, 10, 10 * 60_000)) {
+    return fail("rate_limited", "Too many pages created, try again in a few minutes", 429);
+  }
   const parsed = Body.safeParse(await readJson(req));
   if (!parsed.success) return fail("bad_request", parsed.error.issues[0]?.message ?? "Invalid body", 400);
   const body = parsed.data;
@@ -33,7 +39,9 @@ export async function POST(req: NextRequest) {
     return aiFail(err);
   }
 
-  const village = slugify(draft.villageSlug || body.village || "kazakhstan") || "kazakhstan";
+  // Slug from the Russian village name (deterministic: "Саты" → saty), not the model's own slug guess.
+  const village =
+    slugify(draft.villageName?.ru || body.village || draft.villageSlug || "") || slugify(body.village ?? "") || "kazakhstan";
   const hostName = draft.hostName?.trim() || (body.lang === "kk" ? "Қожайын" : "Хозяин");
   let slug = slugify(hostName) || "dom";
   for (let i = 2; await slugTaken(village, slug); i++) slug = `${slugify(hostName) || "dom"}-${i}`;
@@ -71,7 +79,16 @@ export async function POST(req: NextRequest) {
     createdAt: Date.now(),
   };
 
-  await insertListing(listing);
+  // Two hosts with the same name at the same moment: take the next free slug.
+  for (let i = 2; ; i++) {
+    try {
+      await insertListing(listing);
+      break;
+    } catch (err) {
+      if (i > 20 || !String(err).includes("UNIQUE")) throw err;
+      listing.slug = `${slugify(hostName) || "dom"}-${i}`;
+    }
+  }
   await attachPhotos(body.photoIds, listing.id);
 
   const res = json({ id: listing.id, editToken: listing.editToken, listing, missing: draft.missing });

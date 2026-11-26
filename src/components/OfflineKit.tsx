@@ -56,6 +56,7 @@ function urlsForPage(): { page: string; urls: string[] } | null {
   const isHouse = parts.length === 2 && !RESERVED.has(parts[0] ?? "");
   const isDriver = parts.length === 3 && parts[2] === "driver" && !RESERVED.has(parts[0] ?? "");
   if (!isRequest && !isHouse && !isDriver) return null;
+  if (isRequest && new URLSearchParams(location.search).has("k")) return null; // host view: keep the key out of caches
 
   const page = isRequest ? location.pathname + location.search : path;
   const urls = [page];

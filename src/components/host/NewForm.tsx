@@ -70,7 +70,8 @@ export function NewForm({ t, initialLang }: { t: HostDict; initialLang: DictLang
     setFormErr(null);
     setFailed(false);
     if (speech.listening) speech.stop();
-    const text = speech.text.trim();
+    // Words still being recognised when the host taps "create" count too.
+    const text = `${speech.text} ${speech.interim}`.trim();
     if (text.length < 10) return setFormErr(t.needText);
     if (phone.replace(/\D/g, "").length < 10) return setFormErr(t.needPhone);
     if (photos.busy) return setFormErr(t.waitPhotos);

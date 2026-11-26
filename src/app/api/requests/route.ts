@@ -28,8 +28,10 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) return fail("bad_request", parsed.error.issues[0]?.message ?? "Invalid body", 400);
   const b = parsed.data;
 
+  // Judges on one venue Wi-Fi share an IP, so the limit is generous; it only stops scripts.
   const ip = clientIp(req);
-  if (ip && (await countRecentRequestsFromIp(ip, Date.now() - 60_000)) >= 6) {
+  const perMinute = Number(process.env.QONAQ_REQUESTS_PER_MINUTE ?? 30);
+  if (ip && perMinute > 0 && (await countRecentRequestsFromIp(ip, Date.now() - 60_000)) >= perMinute) {
     return fail("rate_limited", "Too many requests, try again in a minute", 429);
   }
 
@@ -37,16 +39,21 @@ export async function POST(req: NextRequest) {
   if (!listing || listing.status !== "published") return fail("not_found", "Listing not found", 404);
 
   const nights = nightsBetween(b.dateFrom, b.dateTo);
-  if (nights < 1 || nights > 60) return fail("bad_request", "Check the dates", 400);
+  if (!Number.isInteger(nights) || nights < 1 || nights > 60) return fail("bad_request", "Check the dates", 400);
+  const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+  if (b.dateFrom < yesterday) return fail("bad_request", "Dates are in the past", 400);
 
   const rooms = listing.priceGuests ? Math.ceil(b.guests / listing.priceGuests) : 1;
   const totalKzt = listing.priceKzt ? listing.priceKzt * nights * rooms : null;
 
+  // "Car to the lake" with no question uses the ready-made text in all four languages: no AI needed.
   let questionText = b.question;
-  if (b.wantsCar && !questionText) questionText = CAR_QUESTION[b.guestLang];
   let translations: Record<Lang, string> | null = null;
   let questionLang: Lang = b.guestLang;
-  if (questionText) {
+  if (b.wantsCar && !questionText) {
+    questionText = CAR_QUESTION[b.guestLang];
+    translations = CAR_QUESTION;
+  } else if (questionText) {
     try {
       const t = await translateMessage(questionText, "A tourist asks a guesthouse host before booking.");
       translations = t.translations;
@@ -105,8 +112,8 @@ export async function POST(req: NextRequest) {
     replyUrl: hostReplyUrl,
   });
 
+  // No request code in live events: the feed is public and the code opens the request page.
   await pushEvent("request_created", {
-    code: request.code,
     guestName: b.guestName,
     guestLang: b.guestLang,
     listingTitle: listing.content,

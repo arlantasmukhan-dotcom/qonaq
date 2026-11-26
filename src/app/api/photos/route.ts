@@ -1,7 +1,8 @@
 import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { newId } from "@/lib/codes";
-import { fail, json, readJson } from "@/lib/http";
+import { clientIp, fail, json, readJson } from "@/lib/http";
+import { allow } from "@/lib/ratelimit";
 import { insertPhoto } from "@/lib/repo";
 
 const MAX_BYTES = 700 * 1024;
@@ -13,6 +14,9 @@ const Body = z.object({
 
 /** Upload one already-compressed photo. Returns its id for /api/photo/[id]. */
 export async function POST(req: NextRequest) {
+  if (!allow(`photo:${clientIp(req) ?? "?"}`, 40, 10 * 60_000)) {
+    return fail("rate_limited", "Too many photos, try again later", 429);
+  }
   const parsed = Body.safeParse(await readJson(req));
   if (!parsed.success) return fail("bad_request", "Expected a JPEG/PNG/WebP data URL", 400);
   const [head, data] = parsed.data.dataUrl.split(",");

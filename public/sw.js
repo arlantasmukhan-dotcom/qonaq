@@ -30,7 +30,8 @@ function classify(url) {
   if (path.startsWith("/api/photo/")) return "photo";
   if (/^\/api\/requests\/[^/]+$/.test(path)) return "request-api";
   if (path.startsWith("/api/")) return "api";
-  if (/^\/r\/[^/]+$/.test(path)) return "page";
+  // Host view (?k=) carries the host key in its HTML: never store it.
+  if (/^\/r\/[^/]+$/.test(path)) return url.searchParams.has("k") ? "other" : "page";
   const parts = path.split("/").filter(Boolean);
   if (parts.length >= 2 && parts.length <= 3 && !RESERVED.has(parts[0])) {
     if (parts.length === 3 && parts[2] !== "driver") return "other";

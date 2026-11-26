@@ -50,7 +50,7 @@ export function GuestView({ code, initial, lang }: { code: string; initial: Requ
         <Link href="/" className="inline-flex min-h-12 items-center text-lg font-extrabold tracking-tight text-teal">
           Qonaq
         </Link>
-        <LangSwitcher current={lang} />
+        <LangSwitcher current={lang} via="query" />
       </div>
 
       <section

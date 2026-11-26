@@ -85,7 +85,8 @@ export async function draftListing(input: { text: string; lang: Lang; villageHin
   }
   const hint = input.villageHint ? `\nThe host chose the village "${input.villageHint}" in the form.` : "";
   try {
-    const response = await getClient().beta.messages.parse({
+    const response = await getClient().beta.messages.parse(
+      {
       model: MODEL,
       max_tokens: 6000,
       ...(FAST ? { speed: "fast" as const } : {}),
@@ -99,7 +100,9 @@ export async function draftListing(input: { text: string; lang: Lang; villageHin
           content: `Host's words (${input.lang === "kk" ? "Kazakh" : "Russian"}):\n"""${input.text.slice(0, 4000)}"""${hint}`,
         },
       ],
-    });
+      },
+      { maxRetries: 0, timeout: 50_000 },
+    );
     if (response.stop_reason === "refusal") throw new AiError("refused", "refused");
     if (!response.parsed_output) throw new AiError(`no parsed output (stop: ${response.stop_reason})`, "failed");
     return response.parsed_output;

@@ -78,8 +78,45 @@ Rules:
   - kk is Kazakh in Cyrillic; zh is Simplified Chinese; prices inside text use tenge.
 ${GLOSSARY}`;
 
+/**
+ * Test stand-in for local UI checks without an API key: QONAQ_AI_MOCK=1 in .env.local.
+ * Never active in production builds. Output is visibly marked "ТЕСТ" so it can't pass for real AI.
+ */
+const MOCK = process.env.QONAQ_AI_MOCK === "1" && process.env.NODE_ENV !== "production";
+
+function mockDraft(text: string, villageHint?: string): ListingDraft {
+  const num = (re: RegExp) => {
+    const m = text.match(re);
+    return m ? Number(m[1].replace(/\s/g, "")) : null;
+  };
+  const rooms = num(/(\d+)\s*(?:комнат|бөлме)/i);
+  const thousands = num(/(\d+)\s*(?:тысяч|мың)/i);
+  const price = thousands ? thousands * 1000 : num(/(\d[\d\s]{3,})\s*(?:тенге|теңге|₸)/i);
+  const name = text.match(/(?:зовут|атым)\s+([А-ЯЁӘҒҚҢӨҰҮҺІ][а-яёәғқңөұүһі]+)/)?.[1] ?? null;
+  const village = villageHint || "Саты";
+  const mark = (s: string) => `ТЕСТ · ${s}`;
+  const t = (title: string) => ({ title: mark(title), description: mark(text.slice(0, 200)), rules: "" });
+  return {
+    hostName: name,
+    hostNames: name ? { kk: name, ru: name, en: name, zh: name } : null,
+    villageSlug: null,
+    villageName: { kk: village, ru: village, en: village, zh: village },
+    rooms,
+    priceKzt: price,
+    priceGuests: price ? 2 : null,
+    breakfastIncluded: /завтрак|таңғы ас/i.test(text) ? true : null,
+    checkIn: null,
+    extras: /баня|монша/i.test(text)
+      ? [{ kind: "sauna", priceKzt: null, name: { kk: "Монша", ru: "Баня", en: "Banya", zh: "俄式桑拿浴" } }]
+      : [],
+    content: { kk: t(`${name ?? "Қонақ"} үйі`), ru: t(`Дом ${name ?? "хозяина"}`), en: t("Guesthouse"), zh: t("民宿") },
+    missing: ["checkIn", ...(rooms ? [] : ["rooms"]), ...(price ? [] : ["priceKzt"])],
+  };
+}
+
 /** Spoken or typed host description → structured card in kk/ru/en/zh. */
 export async function draftListing(input: { text: string; lang: Lang; villageHint?: string }): Promise<ListingDraft> {
+  if (MOCK) return mockDraft(input.text, input.villageHint);
   if (!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN) {
     throw new AiError("ANTHROPIC_API_KEY is not set", "no_key");
   }
@@ -126,6 +163,11 @@ ${GLOSSARY}`;
 
 /** Short message → all four languages. Used for guest questions and host replies. */
 export async function translateMessage(text: string, context?: string): Promise<Translation> {
+  if (MOCK) {
+    const detectedLang = /[一-鿿]/.test(text) ? "zh" : /[а-яё]/i.test(text) ? "ru" : "en";
+    const tag = (l: string) => (l === detectedLang ? text : `ТЕСТ ${l}: ${text}`);
+    return { detectedLang, translations: { kk: tag("kk"), ru: tag("ru"), en: tag("en"), zh: tag("zh") } };
+  }
   if (!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN) {
     throw new AiError("ANTHROPIC_API_KEY is not set", "no_key");
   }

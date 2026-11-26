@@ -7,6 +7,9 @@ import { getListingById, getRequestByCode, insertMessage, pushEvent, setRequestS
 import { quickReply } from "@/lib/templates";
 import { LANGS, type Lang, type Message } from "@/lib/types";
 
+// AI translation can take several seconds; give serverless hosts room before they cut the request.
+export const maxDuration = 30;
+
 const Body = z
   .object({
     k: z.string().min(4),

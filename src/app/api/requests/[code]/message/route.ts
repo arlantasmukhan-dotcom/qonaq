@@ -7,6 +7,9 @@ import { allow } from "@/lib/ratelimit";
 import { getRequestByCode, insertMessage, touchRequest } from "@/lib/repo";
 import type { Message } from "@/lib/types";
 
+// AI translation can take several seconds; give serverless hosts room before they cut the request.
+export const maxDuration = 30;
+
 const Body = z.object({ text: z.string().trim().min(1).max(1000) });
 
 /** Guest adds a follow-up message on the request page. Response: { message } */

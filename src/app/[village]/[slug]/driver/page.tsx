@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { LangSwitcher } from "@/components/LangSwitcher";
 import { getLang } from "@/i18n/server";
 import { formatPhone, TOURIST } from "@/i18n/tourist";
-import { hostNameIn } from "@/lib/names";
+import { hostNameIn, kkGenitive } from "@/lib/names";
 import { getListingBySlug, publicListing } from "@/lib/repo";
 
 type Props = { params: Promise<{ village: string; slug: string }> };
@@ -37,10 +37,10 @@ export default async function DriverPage({ params }: Props) {
 
       <section className="mt-5 space-y-5" lang="kk">
         <p className="text-[2.1rem] font-extrabold leading-tight tracking-tight">
-          {listing.villageName.kk} ауылы, {hostKk} үйі.
+          {listing.villageName.kk} ауылы, {kkGenitive(hostKk)} үйі.
         </p>
         <p className="text-2xl font-bold leading-tight" lang="ru">
-          Село {listing.villageName.ru}, гостевой дом {hostRu}.
+          Село {listing.villageName.ru}, гостевой дом «{hostRu}».
         </p>
         <p className="text-3xl font-extrabold leading-tight text-teal-dark" lang="ru">
           Тел.: <a href={`tel:+${listing.whatsapp}`}>{phone}</a>
@@ -50,7 +50,7 @@ export default async function DriverPage({ params }: Props) {
             Пожалуйста, отвезите меня сюда.
           </p>
           <p className="mt-2 text-xl font-bold leading-tight text-black/80" lang="kk">
-            Мені осы жерге апарыңызшы.
+            Мені осы жерге апарып тастаңызшы.
           </p>
         </div>
       </section>

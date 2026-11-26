@@ -9,25 +9,25 @@ export function quickReply(
   const d = (lang: Lang) => formatRange(p.dateFrom, p.dateTo, lang);
   if (action === "available") {
     return {
-      kk: `Сәлеметсіз бе! ${d("kk")} бос орын бар. Сізді күтеміз.`,
-      ru: `Здравствуйте! На ${d("ru")} есть свободное место. Ждём вас.`,
-      en: `Hello! We have a free room for ${d("en")}. We look forward to your visit.`,
+      kk: `Сәлеметсіз бе! ${d("kk")} аралығында бос орын бар. Сізді күтеміз!`,
+      ru: `Здравствуйте! На ${d("ru")} есть свободные места. Ждём вас!`,
+      en: `Hello! We have a room available for ${d("en")}. Looking forward to having you!`,
       zh: `您好！${d("zh")}有空房，期待您的到来。`,
     };
   }
   if (action === "busy") {
     return {
-      kk: `Кешіріңіз, ${d("kk")} бос орын жоқ.`,
+      kk: `Кешіріңіз, ${d("kk")} аралығында бос орын жоқ.`,
       ru: `Извините, на ${d("ru")} мест нет.`,
-      en: `Sorry, we are fully booked for ${d("en")}.`,
+      en: `Sorry, we're fully booked for ${d("en")}.`,
       zh: `抱歉，${d("zh")}已满房。`,
     };
   }
   const price = p.carPriceKzt ? formatKzt(p.carPriceKzt) : null;
   const zhPrice = p.carPriceKzt ? `${p.carPriceKzt.toLocaleString("en-US")}坚戈` : null;
   return {
-    kk: price ? `Қолсай көліне көлік бар — ${price}.` : "Қолсай көліне көлік бар.",
-    ru: price ? `Машина до озера Кольсай есть — ${price}.` : "Машина до озера Кольсай есть.",
+    kk: price ? `Көлсай көлдеріне апарып тастаймыз — ${price}.` : "Көлсай көлдеріне апарып тастаймыз.",
+    ru: price ? `Можем отвезти на Кольсайские озёра — ${price}.` : "Можем отвезти на Кольсайские озёра.",
     en: price ? `We can drive you to Kolsai Lakes — ${price}.` : "We can drive you to Kolsai Lakes.",
     zh: zhPrice ? `可以安排车去科尔赛湖，${zhPrice}。` : "可以安排车去科尔赛湖。",
   };

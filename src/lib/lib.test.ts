@@ -97,3 +97,18 @@ describe("quick replies", () => {
     expect(r.ru).toContain("8 000 ₸");
   });
 });
+
+describe("kazakh genitive", async () => {
+  const { kkGenitive } = await import("./names");
+  it("follows vowel harmony and the last sound", () => {
+    expect(kkGenitive("Ерлан")).toBe("Ерланның");
+    expect(kkGenitive("Айгүл")).toBe("Айгүлдің");
+    expect(kkGenitive("Нұрлан")).toBe("Нұрланның");
+    expect(kkGenitive("Гүлнар")).toBe("Гүлнардың");
+    expect(kkGenitive("Бауыржан")).toBe("Бауыржанның");
+    expect(kkGenitive("Әсет")).toBe("Әсеттің");
+    expect(kkGenitive("Әсел")).toBe("Әселдің");
+    expect(kkGenitive("Айгерім")).toBe("Айгерімнің");
+    expect(kkGenitive("Дана")).toBe("Дананың");
+  });
+});

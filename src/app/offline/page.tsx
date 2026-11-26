@@ -5,10 +5,10 @@ import Link from "next/link";
 export const metadata: Metadata = { title: "Offline" };
 
 const ROWS = [
-  { lang: "ru", title: "Нет сети", text: "Эта страница ещё не сохранена на телефоне. Откройте её один раз с интернетом — потом она будет работать без сети.", back: "На главную" },
-  { lang: "kk", title: "Желі жоқ", text: "Бұл бет әлі телефонда сақталмаған. Интернет бар кезде бір рет ашыңыз — кейін желісіз жұмыс істейді.", back: "Басты бет" },
-  { lang: "en", title: "You are offline", text: "This page is not saved on your phone yet. Open it once with internet and it will work without a connection.", back: "Home" },
-  { lang: "zh-CN", title: "当前离线", text: "此页面尚未保存到您的手机。联网时打开一次，之后即可离线查看。", back: "返回首页" },
+  { lang: "ru", title: "Нет интернета", text: "Эта страница ещё не сохранена на телефоне. Откройте её один раз с интернетом — потом она будет открываться и без него.", back: "На главную" },
+  { lang: "kk", title: "Интернет жоқ", text: "Бұл бет телефоныңызда әлі сақталмаған. Интернет бар кезде оны бір рет ашыңыз — кейін интернетсіз де ашылады.", back: "Басты бетке" },
+  { lang: "en", title: "You're offline", text: "This page isn't saved on your phone yet. Open it once while online, and after that it will work without a connection.", back: "Home" },
+  { lang: "zh-CN", title: "网络未连接", text: "此页面尚未保存到您的手机。请在联网时打开一次，之后即可离线查看。", back: "返回首页" },
 ] as const;
 
 export default function OfflinePage() {
@@ -27,7 +27,7 @@ export default function OfflinePage() {
         ))}
       </ul>
       <Link href="/" className="btn btn-primary btn-xl mt-6 w-full">
-        Главная · Home · 首页
+        Басты бет · Главная · Home · 首页
       </Link>
     </main>
   );

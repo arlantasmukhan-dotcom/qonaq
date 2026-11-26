@@ -7,6 +7,9 @@ import { countRecentRequestsFromIp, getListingById, insertMessage, insertRequest
 import { nightsBetween, waLink, whatsappMessage } from "@/lib/templates";
 import { LANGS, type Lang } from "@/lib/types";
 
+// AI translation can take several seconds; give serverless hosts room before they cut the request.
+export const maxDuration = 30;
+
 const Body = z.object({
   listingId: z.string().uuid(),
   guestName: z.string().trim().min(1).max(60),

@@ -14,6 +14,9 @@ import {
 } from "@/lib/repo";
 import { EXTRA_KINDS, LANGS, type Lang, type ListingText, type Localized } from "@/lib/types";
 
+// AI translation can take several seconds; give serverless hosts room before they cut the request.
+export const maxDuration = 30;
+
 type Ctx = { params: Promise<{ id: string }> };
 
 /** Host view of a listing: full card + its requests. Needs the edit token. */

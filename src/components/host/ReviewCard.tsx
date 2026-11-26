@@ -164,7 +164,7 @@ export function ReviewCard({
                 label={x.name[hostLang] || x.name[src] || x.kind}
                 kind="number"
                 value={x.priceKzt?.toString() ?? ""}
-                display={x.priceKzt === null || x.priceKzt === 0 ? t.free : formatKzt(x.priceKzt)}
+                display={x.priceKzt === null ? t.priceUnset : x.priceKzt === 0 ? t.free : formatKzt(x.priceKzt)}
                 suffix="₸"
                 onSave={(v) => {
                   const n = v.trim() === "" ? null : Math.round(Number(v));

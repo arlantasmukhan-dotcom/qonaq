@@ -84,7 +84,8 @@ export function FieldRow({
 
   const id = `f-${label.replace(/\W/g, "")}`;
   return (
-    <div className="rounded-2xl border-2 border-teal bg-paper p-3">
+    // col-span-2: a half-width card (rooms, check-in) takes the whole row while editing.
+    <div className="col-span-2 rounded-2xl border-2 border-teal bg-paper p-3">
       <label className="label" htmlFor={id}>
         {label}
       </label>
@@ -111,7 +112,7 @@ export function FieldRow({
           {err}
         </p>
       )}
-      <div className="mt-3 flex gap-2">
+      <div className="mt-3 flex flex-wrap gap-2">
         <button type="button" className="btn btn-primary flex-1" disabled={saving} onClick={() => void save()}>
           {saving ? (busyText ?? t.saving) : t.save}
         </button>

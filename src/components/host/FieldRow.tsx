@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import type { HostDict } from "@/i18n/host";
 
 export type FieldKind = "text" | "area" | "number" | "time";
@@ -31,6 +31,7 @@ export function FieldRow({
   onRemove?: () => void;
   busyText?: string;
 }) {
+  const id = useId(); // unique per row: Cyrillic labels all collapsed to the same "f-" id before
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
   const [saving, setSaving] = useState(false);
@@ -82,7 +83,6 @@ export function FieldRow({
     );
   }
 
-  const id = `f-${label.replace(/\W/g, "")}`;
   return (
     // col-span-2: a half-width card (rooms, check-in) takes the whole row while editing.
     <div className="col-span-2 rounded-2xl border-2 border-teal bg-paper p-3">

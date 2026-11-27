@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { randomCode, slugify } from "./codes";
 import { formatDual, formatIn, formatKzt } from "./currency";
 import { langFromAcceptLanguage } from "./lang";
-import { formatRange, nightsBetween, quickReply, waLink, whatsappMessage } from "./templates";
+import { carQuestion, formatRange, nightsBetween, quickReply, waLink, whatsappMessage } from "./templates";
 
 describe("codes", () => {
   it("uses only unambiguous characters", () => {
@@ -49,6 +49,8 @@ describe("dates", () => {
     expect(formatRange("2027-07-12", "2027-07-14", "ru")).toBe("12–14 июля");
     expect(formatRange("2027-07-12", "2027-07-14", "zh")).toBe("7月12日至14日");
     expect(formatRange("2027-07-12", "2027-07-14", "en")).toBe("Jul 12–14");
+    expect(formatRange("2027-07-12", "2027-07-14", "kk")).toBe("12–14 шілде");
+    expect(formatRange("2027-07-30", "2027-08-02", "kk")).toBe("30 шілде – 2 тамыз");
   });
 });
 
@@ -92,9 +94,32 @@ describe("quick replies", () => {
     expect(r.en).toContain("Jul 12–14");
   });
   it("includes the car price", () => {
-    const r = quickReply("car", { dateFrom: "2027-07-12", dateTo: "2027-07-14", carPriceKzt: 8000 });
-    expect(r.zh).toBe("可以安排车去科尔赛湖，8,000坚戈。");
-    expect(r.ru).toContain("8 000 ₸");
+    const r = quickReply("car", { dateFrom: "2027-07-12", dateTo: "2027-07-14", car: KOLSAI_CAR });
+    expect(r.zh).toBe("可以安排「科尔赛湖包车」，8,000坚戈。");
+    expect(r.ru).toBe(`Да, «Машина до Кольсайских озёр» можем организовать — ${formatKzt(8000)}.`);
+  });
+});
+
+const KOLSAI_CAR = {
+  priceKzt: 8000,
+  name: { kk: "Көлсай көлдеріне көлік", ru: "Машина до Кольсайских озёр", en: "Car to Kolsai Lakes", zh: "科尔赛湖包车" },
+};
+const KAINDY_CAR = {
+  priceKzt: 10000,
+  name: { kk: "Қайыңды көліне көлік", ru: "Машина до озера Каинды", en: "Car to Kaindy Lake", zh: "凯恩迪湖包车" },
+};
+
+describe("car texts", () => {
+  it("quote the house's own car service, never another place", () => {
+    const r = quickReply("car", { dateFrom: "2027-07-12", dateTo: "2027-07-14", car: KAINDY_CAR });
+    expect(Object.values(r).join(" ")).not.toMatch(/Кольсай|Көлсай|Kolsai|科尔赛/);
+    expect(r.en).toContain("Car to Kaindy Lake");
+    expect(carQuestion(KAINDY_CAR).ru).toBe("Хотим заказать «Машина до озера Каинды». Это возможно?");
+  });
+  it("fall back to a plain car text without a named service", () => {
+    const r = quickReply("car", { dateFrom: "2027-07-12", dateTo: "2027-07-14", car: { priceKzt: null, name: { kk: "", ru: "", en: "", zh: "" } } });
+    expect(r.ru).toBe("Машина есть, можем отвезти.");
+    expect(carQuestion(null).ru).toBe("Можете организовать машину?");
   });
 });
 
@@ -110,5 +135,32 @@ describe("kazakh genitive", async () => {
     expect(kkGenitive("Әсел")).toBe("Әселдің");
     expect(kkGenitive("Айгерім")).toBe("Айгерімнің");
     expect(kkGenitive("Дана")).toBe("Дананың");
+  });
+});
+
+describe("house capacity", async () => {
+  const { maxGuests } = await import("@/components/tourist/price");
+  it("caps guests at rooms × guests per room", () => {
+    expect(maxGuests(4, 2)).toBe(8);
+    expect(maxGuests(10, 3)).toBe(12);
+    expect(maxGuests(null, 2)).toBe(12);
+    expect(maxGuests(1, 1)).toBe(1);
+  });
+});
+
+describe("input checks", async () => {
+  const { normalizeWhatsapp } = await import("./phone");
+  const { isRealDate } = await import("./templates");
+  it("normalises Kazakh WhatsApp numbers", () => {
+    expect(normalizeWhatsapp("+7 701 123 45 67")).toBe("77011234567");
+    expect(normalizeWhatsapp("8 701 123 45 67")).toBe("77011234567");
+    expect(normalizeWhatsapp("701 123 45 67")).toBe("77011234567");
+    expect(normalizeWhatsapp("12345")).toBeNull();
+  });
+  it("rejects impossible calendar dates", () => {
+    expect(isRealDate("2027-02-28")).toBe(true);
+    expect(isRealDate("2028-02-29")).toBe(true);
+    expect(isRealDate("2027-02-30")).toBe(false);
+    expect(isRealDate("2027-13-01")).toBe(false);
   });
 });

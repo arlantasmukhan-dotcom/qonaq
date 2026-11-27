@@ -35,7 +35,8 @@ export function NewForm({ t, initialLang }: { t: HostDict; initialLang: DictLang
   const [dictLang, setDictLang] = useState<DictLang>(initialLang);
   const speech = useSpeech(dictLang === "kk" ? "kk-KZ" : "ru-RU");
   const [phone, setPhone] = useState("");
-  const [village, setVillage] = useState("Саты");
+  // Empty by default: a pre-filled "Саты" contradicted hosts who name another village aloud.
+  const [village, setVillage] = useState("");
   const [photos, setPhotos] = useState<{ ids: string[]; busy: boolean }>({ ids: [], busy: false });
   const [busy, setBusy] = useState(false);
   const [step, setStep] = useState(0);
@@ -74,6 +75,10 @@ export function NewForm({ t, initialLang }: { t: HostDict; initialLang: DictLang
     const text = `${speech.text} ${speech.interim}`.trim();
     if (text.length < 10) return setFormErr(t.needText);
     if (phone.replace(/\D/g, "").length < 10) return setFormErr(t.needPhone);
+    if (!village.trim()) {
+      document.getElementById("village")?.focus();
+      return setFormErr(t.needVillage);
+    }
     if (photos.busy) return setFormErr(t.waitPhotos);
     setStep(0);
     setBusy(true);
@@ -84,7 +89,7 @@ export function NewForm({ t, initialLang }: { t: HostDict; initialLang: DictLang
           text,
           lang: dictLang,
           whatsapp: phone.replace(/\D/g, ""),
-          village: village.trim() || undefined,
+          village: village.trim(),
           photoIds: photos.ids,
         }),
       );
@@ -215,7 +220,15 @@ export function NewForm({ t, initialLang }: { t: HostDict; initialLang: DictLang
           <label className="label" htmlFor="village">
             {t.village}
           </label>
-          <input id="village" className="input" value={village} onChange={(e) => setVillage(e.target.value)} maxLength={60} />
+          <input
+            id="village"
+            className="input"
+            value={village}
+            placeholder={t.villagePlaceholder}
+            onChange={(e) => setVillage(e.target.value)}
+            maxLength={60}
+          />
+          <p className="mt-1 text-xs text-muted">{t.villageHint}</p>
         </div>
       </section>
 

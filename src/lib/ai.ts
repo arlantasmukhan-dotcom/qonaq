@@ -120,7 +120,10 @@ export async function draftListing(input: { text: string; lang: Lang; villageHin
   if (!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN) {
     throw new AiError("ANTHROPIC_API_KEY is not set", "no_key");
   }
-  const hint = input.villageHint ? `\nThe host chose the village "${input.villageHint}" in the form.` : "";
+  // The spoken words win: the form field is only a fallback when the host names no village aloud.
+  const hint = input.villageHint
+    ? `\nThe host also typed the village "${input.villageHint}" in a form field. If their words above name a village, use the spoken one; use the typed one only when the words name none.`
+    : "";
   try {
     const response = await getClient().beta.messages.parse(
       {
@@ -172,7 +175,10 @@ export async function translateMessage(text: string, context?: string): Promise<
     throw new AiError("ANTHROPIC_API_KEY is not set", "no_key");
   }
   try {
-    const response = await getClient().beta.messages.parse({
+    // One attempt within 22 s: the routes that translate stop at 30 s on serverless hosts, and a clean
+    // "AI failed" reply beats the platform cutting the request mid-call.
+    const response = await getClient().beta.messages.parse(
+      {
       model: MODEL,
       max_tokens: 2000,
       ...(FAST ? { speed: "fast" as const } : {}),
@@ -186,7 +192,9 @@ export async function translateMessage(text: string, context?: string): Promise<
           content: `${context ? `Context: ${context}\n` : ""}Message:\n"""${text.slice(0, 2000)}"""`,
         },
       ],
-    });
+      },
+      { maxRetries: 0, timeout: 22_000 },
+    );
     if (response.stop_reason === "refusal") throw new AiError("refused", "refused");
     if (!response.parsed_output) throw new AiError(`no parsed output (stop: ${response.stop_reason})`, "failed");
     return response.parsed_output;

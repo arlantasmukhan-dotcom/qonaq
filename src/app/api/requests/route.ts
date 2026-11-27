@@ -4,7 +4,7 @@ import { translateMessage } from "@/lib/ai";
 import { hostKey, newId, requestCode } from "@/lib/codes";
 import { aiFail, baseUrl, clientIp, fail, json, readJson } from "@/lib/http";
 import { countRecentRequestsFromIp, getListingById, insertMessage, insertRequest, pushEvent } from "@/lib/repo";
-import { nightsBetween, waLink, whatsappMessage } from "@/lib/templates";
+import { carQuestion, isRealDate, nightsBetween, waLink, whatsappMessage } from "@/lib/templates";
 import { LANGS, type Lang } from "@/lib/types";
 
 // AI translation can take several seconds; give serverless hosts room before they cut the request.
@@ -15,8 +15,8 @@ const Body = z.object({
   guestName: z.string().trim().min(1).max(60),
   guestLang: z.enum(LANGS),
   guests: z.number().int().min(1).max(30),
-  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  dateFrom: z.string().refine(isRealDate, "Invalid date"),
+  dateTo: z.string().refine(isRealDate, "Invalid date"),
   wantsCar: z.boolean().default(false),
   question: z.string().trim().max(1000).default(""),
 });
@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
   if (b.dateFrom < yesterday) return fail("bad_request", "Dates are in the past", 400);
 
   const rooms = listing.priceGuests ? Math.ceil(b.guests / listing.priceGuests) : 1;
+  if (listing.rooms && rooms > listing.rooms) return fail("too_many_guests", "Too many guests for this house", 400);
   const totalKzt = listing.priceKzt ? listing.priceKzt * nights * rooms : null;
 
   // "Car to the lake" with no question uses the ready-made text in all four languages: no AI needed.
@@ -54,8 +55,8 @@ export async function POST(req: NextRequest) {
   let translations: Record<Lang, string> | null = null;
   let questionLang: Lang = b.guestLang;
   if (b.wantsCar && !questionText) {
-    questionText = CAR_QUESTION[b.guestLang];
-    translations = CAR_QUESTION;
+    translations = carQuestion(listing.extras.find((e) => e.kind === "car"));
+    questionText = translations[b.guestLang];
   } else if (questionText) {
     try {
       const t = await translateMessage(questionText, "A tourist asks a guesthouse host before booking.");
@@ -133,10 +134,3 @@ export async function POST(req: NextRequest) {
     message,
   });
 }
-
-const CAR_QUESTION: Record<Lang, string> = {
-  kk: "Қолсай көліне көлік ұйымдастыра аласыз ба?",
-  ru: "Можете организовать машину до озера Кольсай?",
-  en: "Can you arrange a car to Kolsai Lakes?",
-  zh: "可以帮我们安排去科尔赛湖的车吗？",
-};

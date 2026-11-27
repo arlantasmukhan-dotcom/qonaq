@@ -41,7 +41,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cod
     const translations = quickReply(b.action, {
       dateFrom: request.dateFrom,
       dateTo: request.dateTo,
-      carPriceKzt: car?.priceKzt ?? null,
+      car,
     });
     message = {
       id: newId(),

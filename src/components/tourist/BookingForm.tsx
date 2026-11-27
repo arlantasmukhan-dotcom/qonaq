@@ -6,7 +6,7 @@ import { TOURIST } from "@/i18n/tourist";
 import { DEFAULT_CURRENCY, formatIn, formatKzt } from "@/lib/currency";
 import { nightsBetween } from "@/lib/templates";
 import type { Lang, Listing } from "@/lib/types";
-import { roomsFor } from "./price";
+import { maxGuests, roomsFor } from "./price";
 
 const MY_REQUESTS_KEY = "qonaq_my_requests";
 
@@ -51,7 +51,9 @@ export function BookingForm({
 
   const [from, setFrom] = useState(defaultFrom);
   const [to, setTo] = useState(defaultTo);
-  const [guests, setGuests] = useState(2);
+  // Never offer more guests than the house holds (rooms × guests per room), or the quote would bill rooms it lacks.
+  const maxG = maxGuests(listing.rooms, listing.priceGuests);
+  const [guests, setGuests] = useState(Math.min(2, maxG));
   const [name, setName] = useState("");
   const [wantsCar, setWantsCar] = useState(false);
   const [question, setQuestion] = useState("");
@@ -109,7 +111,9 @@ export function BookingForm({
               ? t.errNoKey
               : code === "ai_failed"
                 ? t.errAi
-                : code === "bad_request"
+                : code === "too_many_guests"
+                  ? t.errGuests
+                  : code === "bad_request"
                   ? t.errDates
                   : t.errNetwork;
         setError({ code, text, mode });
@@ -207,8 +211,8 @@ export function BookingForm({
           <button
             type="button"
             aria-label={t.more}
-            disabled={guests >= 12}
-            onClick={() => setGuests((g) => Math.min(12, g + 1))}
+            disabled={guests >= maxG}
+            onClick={() => setGuests((g) => Math.min(maxG, g + 1))}
             className="btn btn-ghost h-12 w-12 !min-h-12 !p-0 text-2xl"
           >
             +

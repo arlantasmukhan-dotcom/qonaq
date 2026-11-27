@@ -6,8 +6,11 @@ import type { HostDict } from "@/i18n/host";
 import { formatKzt } from "@/lib/currency";
 import { LANG_LABEL } from "@/lib/lang";
 import type { Lang, Listing, ListingText } from "@/lib/types";
+import { formatPhone } from "@/i18n/tourist";
+import { normalizeWhatsapp } from "@/lib/phone";
 import { apiJson, ApiFail, jsonInit } from "./api";
 import { FieldRow } from "./FieldRow";
+import { LocationField } from "./LocationField";
 
 const PREVIEW_ORDER: Lang[] = ["zh", "en", "kk", "ru"];
 type TextField = keyof ListingText;
@@ -179,6 +182,21 @@ export function ReviewCard({
       </div>
 
       <FieldRow t={t} label={t.fRules} kind="area" lang={src} value={srcText.rules} missing={missing.rules} onSave={saveText("rules")} busyText={t.saveTranslating} />
+
+      <FieldRow
+        t={t}
+        label={t.fPhone}
+        kind="text"
+        value={formatPhone(listing.whatsapp)}
+        onSave={(v) => {
+          // Same normalisation as the server; bookings go to this number, so check it here.
+          const digits = normalizeWhatsapp(v);
+          if (!digits) return Promise.resolve(t.badPhone);
+          return patch({ whatsapp: digits });
+        }}
+      />
+
+      <LocationField t={t} lat={listing.lat} lng={listing.lng} onSave={(pos) => patch(pos)} />
 
       <section className="card mt-6 overflow-hidden" aria-label={t.previewTitle}>
         <div className="bg-teal-soft p-3">

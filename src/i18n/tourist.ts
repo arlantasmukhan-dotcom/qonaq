@@ -44,6 +44,7 @@ export interface TouristStrings {
   waHint: string;
   errName: string;
   errDates: string;
+  errGuests: string;
   errRate: string;
   errNoKey: string;
   errAi: string;
@@ -72,6 +73,9 @@ export interface TouristStrings {
   sendingMsg: string;
   openWa: string;
   openWaSub: string;
+  sentNotice: string;
+  notifyWa: string;
+  notifyWaSub: string;
   viewHouse: string;
   msgError: string;
   yourQuestion: string;
@@ -124,7 +128,7 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     more: "More guests",
     nameLabel: "Your name",
     namePlaceholder: "e.g. Li Wei",
-    carToggle: (p) => (p ? `I need a car to the lake (${p})` : "I need a car to the lake"),
+    carToggle: (p) => (p ? `I need a car / transfer (${p})` : "I need a car / transfer"),
     questionLabel: "Your question (optional)",
     questionPlaceholder: "Write in English. The host will read it in Russian.",
     nights: (n) => `${n} ${n === 1 ? "night" : "nights"}`,
@@ -136,6 +140,7 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     waHint: "WhatsApp will open with a ready-made message in Russian. The host's reply will appear here in English.",
     errName: "Please enter your name.",
     errDates: "Check-out must be after check-in.",
+    errGuests: "This house cannot take that many guests. Please choose fewer.",
     errRate: "Too many requests. Please wait a minute and try again.",
     errNoKey: "Translation isn't available right now, so we couldn't send your question.",
     errAi: "We couldn't translate your question. Please try again.",
@@ -163,6 +168,9 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     sendingMsg: "Sending…",
     openWa: "Open WhatsApp",
     openWaSub: "Send your request to the host",
+    sentNotice: "Message saved. The host sees it when they open your request.",
+    notifyWa: "Tell the host in WhatsApp",
+    notifyWaSub: "Sends your message, already translated",
     viewHouse: "Back to the guesthouse",
     msgError: "Couldn't send. Please try again.",
     yourQuestion: "Your question",
@@ -204,7 +212,7 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     more: "增加人数",
     nameLabel: "您的姓名",
     namePlaceholder: "例如：李伟",
-    carToggle: (p) => (p ? `需要用车去湖边（${p}）` : "需要用车去湖边"),
+    carToggle: (p) => (p ? `需要用车接送（${p}）` : "需要用车接送"),
     questionLabel: "给房东的问题（选填）",
     questionPlaceholder: "请用中文提问，房东会收到俄语翻译。",
     nights: (n) => `${n}晚`,
@@ -216,6 +224,7 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     waHint: "将打开 WhatsApp 并自动填好俄语消息，房东的回复会翻译成中文显示在这里。",
     errName: "请填写您的姓名。",
     errDates: "退房日期必须晚于入住日期。",
+    errGuests: "该房源容纳不了这么多人，请减少人数。",
     errRate: "请求过于频繁，请稍等一分钟再试。",
     errNoKey: "翻译功能暂时不可用，问题暂无法发送。",
     errAi: "问题翻译失败，请重试。",
@@ -243,6 +252,9 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     sendingMsg: "发送中…",
     openWa: "打开 WhatsApp",
     openWaSub: "将申请发送给房东",
+    sentNotice: "留言已保存。房东打开您的申请时即可看到。",
+    notifyWa: "通过 WhatsApp 通知房东",
+    notifyWaSub: "发送已翻译好的留言",
     viewHouse: "返回房源",
     msgError: "发送失败，请重试。",
     yourQuestion: "您的问题",
@@ -284,7 +296,7 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     more: "Больше гостей",
     nameLabel: "Ваше имя",
     namePlaceholder: "Например, Анна",
-    carToggle: (p) => (p ? `Нужна машина до озера (${p})` : "Нужна машина до озера"),
+    carToggle: (p) => (p ? `Нужна машина (${p})` : "Нужна машина"),
     questionLabel: "Ваш вопрос (необязательно)",
     questionPlaceholder: "Например: можно ли приехать позже?",
     nights: (n) => `${n} ${ruPlural(n, "ночь", "ночи", "ночей")}`,
@@ -296,6 +308,7 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     waHint: "Откроется WhatsApp с готовым сообщением. Ответ хозяина появится здесь.",
     errName: "Укажите ваше имя.",
     errDates: "Выезд должен быть позже заезда.",
+    errGuests: "Столько гостей этот дом не вместит. Уменьшите число гостей.",
     errRate: "Слишком много заявок. Подождите минуту и попробуйте снова.",
     errNoKey: "Перевод сейчас недоступен, поэтому вопрос не отправился.",
     errAi: "Не удалось перевести вопрос. Попробуйте ещё раз.",
@@ -323,6 +336,9 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     sendingMsg: "Отправляем…",
     openWa: "Открыть WhatsApp",
     openWaSub: "Отправьте заявку хозяину",
+    sentNotice: "Сообщение сохранено. Хозяин увидит его, когда откроет заявку.",
+    notifyWa: "Сообщить хозяину в WhatsApp",
+    notifyWaSub: "Отправит ваше сообщение уже с переводом",
     viewHouse: "Назад к дому",
     msgError: "Не удалось отправить. Попробуйте ещё раз.",
     yourQuestion: "Ваш вопрос",
@@ -364,7 +380,7 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     more: "Қонақты көбейту",
     nameLabel: "Атыңыз",
     namePlaceholder: "Мысалы, Айдос",
-    carToggle: (p) => (p ? `Көлге апаратын көлік керек (${p})` : "Көлге апаратын көлік керек"),
+    carToggle: (p) => (p ? `Көлік керек (${p})` : "Көлік керек"),
     questionLabel: "Сұрағыңыз (міндетті емес)",
     questionPlaceholder: "Мысалы: кешірек келуге бола ма?",
     nights: (n) => `${n} түн`,
@@ -376,6 +392,7 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     waHint: "WhatsApp дайын хабарламамен ашылады. Үй иесінің жауабы осы жерде шығады.",
     errName: "Атыңызды жазыңыз.",
     errDates: "Кету күні келу күнінен кейін болуы керек.",
+    errGuests: "Бұл үй мұнша қонақты сыйғыза алмайды. Қонақ санын азайтыңыз.",
     errRate: "Өтінім тым көп болды. Бір минуттан кейін қайталап көріңіз.",
     errNoKey: "Аударма қазір қолжетімсіз, сондықтан сұрақ жіберілмеді.",
     errAi: "Сұрақты аудара алмадық. Қайталап көріңіз.",
@@ -403,6 +420,9 @@ export const TOURIST: Record<Lang, TouristStrings> = {
     sendingMsg: "Жіберілуде…",
     openWa: "WhatsApp ашу",
     openWaSub: "Өтінімді үй иесіне жіберіңіз",
+    sentNotice: "Хабарлама сақталды. Үй иесі өтінімді ашқанда көреді.",
+    notifyWa: "Үй иесіне WhatsApp-та хабарлау",
+    notifyWaSub: "Хабарламаңызды аудармасымен жібереді",
     viewHouse: "Үй бетіне оралу",
     msgError: "Жіберілмеді. Қайталап көріңіз.",
     yourQuestion: "Сіздің сұрағыңыз",

@@ -7,7 +7,7 @@ export function json<T>(data: T, init?: ResponseInit) {
   return NextResponse.json(data, init);
 }
 
-export type ApiErrorCode = "bad_request" | "not_found" | "forbidden" | "rate_limited" | "ai_no_key" | "ai_failed";
+export type ApiErrorCode = "bad_request" | "too_many_guests" | "not_found" | "forbidden" | "rate_limited" | "ai_no_key" | "ai_failed";
 
 export function fail(code: ApiErrorCode, message: string, status: number) {
   return NextResponse.json({ error: { code, message } }, { status });

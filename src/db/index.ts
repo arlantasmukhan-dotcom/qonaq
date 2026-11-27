@@ -72,8 +72,16 @@ async function seedIfEmpty(db: Db) {
 /** Returns the database once its tables exist. Safe to call from any server code. */
 export async function getDb(): Promise<Db> {
   if (!globalForDb.qonaqDb) globalForDb.qonaqDb = init();
-  await globalForDb.qonaqDb.ready;
-  return globalForDb.qonaqDb.db;
+  const current = globalForDb.qonaqDb;
+  try {
+    await current.ready;
+  } catch (err) {
+    // A failed start (e.g. Turso briefly unreachable) must not stick: the next request tries again.
+    if (globalForDb.qonaqDb === current) globalForDb.qonaqDb = undefined;
+    current.client.close();
+    throw err;
+  }
+  return current.db;
 }
 
 export { schema };

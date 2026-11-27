@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { translateMessage } from "@/lib/ai";
 import { newId } from "@/lib/codes";
+import { normalizeWhatsapp } from "@/lib/phone";
 import { aiFail, baseUrl, fail, hostToken, json, readJson, safeEqual, setEditCookie } from "@/lib/http";
 import {
   getListingById,
@@ -71,6 +72,8 @@ const Patch = z.object({
   /** Host edited the text in this language: re-translate it into the other three. */
   retranslateFrom: z.enum(LANGS).optional(),
   status: z.enum(["draft", "published"]).optional(),
+}).refine((b) => (b.lat === undefined) === (b.lng === undefined) && (b.lat === null) === (b.lng === null), {
+  message: "lat and lng go together",
 });
 
 /** Host edits fields of the card and/or publishes it. Needs the edit token. */
@@ -87,8 +90,8 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
   const patch: Parameters<typeof updateListing>[1] = { ...rest };
   if (extras) patch.extras = extras.map((e) => ({ ...e, id: e.id ?? newId() }));
   if (whatsapp) {
-    const digits = whatsapp.replace(/\D/g, "").replace(/^8(?=7\d{9}$)/, "7");
-    if (digits.length < 10 || digits.length > 15) return fail("bad_request", "Invalid WhatsApp number", 400);
+    const digits = normalizeWhatsapp(whatsapp);
+    if (!digits) return fail("bad_request", "Invalid WhatsApp number", 400);
     patch.whatsapp = digits;
   }
 

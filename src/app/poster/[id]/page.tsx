@@ -12,7 +12,7 @@ import { LANGS } from "@/lib/types";
 export const metadata: Metadata = { title: "Плакат" };
 export const dynamic = "force-dynamic";
 
-const PER_NIGHT = { kk: "түнеуі", ru: "за ночь", en: "per night", zh: "每晚" } as const;
+const PER_NIGHT = { kk: "бір түнге", ru: "за ночь", en: "per night", zh: "每晚" } as const;
 
 export default async function PosterPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -3,11 +3,20 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { HostDict } from "@/i18n/host";
-import type { BookingRequest, Lang, Listing } from "@/lib/types";
+import type { BookingRequest, Lang, Listing, Message } from "@/lib/types";
 import { apiJson, copyText } from "./api";
 import { Confetti } from "./Confetti";
 
-type Req = BookingRequest & { hostKey: string };
+type Req = BookingRequest & { hostKey: string; messages?: Message[] };
+
+/**
+ * The guest wrote again after the host's last answer (button, car or text). A request with no host
+ * answer yet already shows "new", so only a message after an answer needs the badge.
+ */
+function awaitsHost(r: Req): boolean {
+  const msgs = r.messages ?? [];
+  return msgs.at(-1)?.author === "guest" && msgs.some((m) => m.author === "host");
+}
 const FLAG: Record<Lang, string> = { kk: "🇰🇿", ru: "🇷🇺", en: "🇬🇧", zh: "🇨🇳" };
 
 function fmtDate(d: string, locale: string) {
@@ -167,7 +176,7 @@ export function HostDashboard({
           <h2 className="text-xl font-extrabold">{t.requests}</h2>
           <span className={`chip ${offline ? "!bg-busy-soft !text-busy" : ""}`}>
             <span className={`h-2 w-2 rounded-full ${offline ? "bg-busy" : "animate-pulse bg-ok"}`} />
-            {offline ? "offline" : t.live}
+            {offline ? t.offline : t.live}
           </span>
         </div>
         {requests === null ? (
@@ -191,7 +200,10 @@ export function HostDashboard({
                       {fmtDate(r.dateFrom, locale)} – {fmtDate(r.dateTo, locale)} · {r.nights} {t.nights} · {r.guests} {t.guestsCount}
                     </span>
                   </span>
-                  <span className={`chip shrink-0 ${statusCls[r.status]}`}>{statusLabel[r.status]}</span>
+                  <span className="flex shrink-0 flex-col items-end gap-1">
+                    <span className={`chip ${statusCls[r.status]}`}>{statusLabel[r.status]}</span>
+                    {awaitsHost(r) && <span className="chip bg-saffron text-ink">✉️ {t.newMessage}</span>}
+                  </span>
                 </Link>
               </li>
             ))}

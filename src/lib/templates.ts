@@ -4,7 +4,7 @@ import { formatKzt } from "./currency";
 /** Host quick replies: fixed text in four languages, so the tap is instant and never fails. */
 export function quickReply(
   action: "available" | "busy" | "car",
-  p: { dateFrom: string; dateTo: string; carPriceKzt?: number | null },
+  p: { dateFrom: string; dateTo: string; car?: CarService },
 ): Localized {
   const d = (lang: Lang) => formatRange(p.dateFrom, p.dateTo, lang);
   if (action === "available") {
@@ -23,13 +23,52 @@ export function quickReply(
       zh: `抱歉，${d("zh")}已满房。`,
     };
   }
-  const price = p.carPriceKzt ? formatKzt(p.carPriceKzt) : null;
-  const zhPrice = p.carPriceKzt ? `${p.carPriceKzt.toLocaleString("en-US")}坚戈` : null;
+  // The car text quotes the host's own car service ("Машина до озера Каинды"), so it never names
+  // a place the house does not drive to.
+  const price = p.car?.priceKzt ? formatKzt(p.car.priceKzt) : null;
+  const zhPrice = p.car?.priceKzt ? `${p.car.priceKzt.toLocaleString("en-US")}坚戈` : null;
+  const n = carName(p.car);
+  const tail = (sep: string, v: string | null) => (v ? `${sep}${v}` : "");
+  if (n) {
+    return {
+      kk: `Иә, «${n.kk}» ұйымдастырамыз${tail(" — ", price)}.`,
+      ru: `Да, «${n.ru}» можем организовать${tail(" — ", price)}.`,
+      en: `Yes, we can arrange "${n.en}"${tail(" — ", price)}.`,
+      zh: `可以安排「${n.zh}」${tail("，", zhPrice)}。`,
+    };
+  }
   return {
-    kk: price ? `Көлсай көлдеріне апарып тастаймыз — ${price}.` : "Көлсай көлдеріне апарып тастаймыз.",
-    ru: price ? `Можем отвезти на Кольсайские озёра — ${price}.` : "Можем отвезти на Кольсайские озёра.",
-    en: price ? `We can drive you to Kolsai Lakes — ${price}.` : "We can drive you to Kolsai Lakes.",
-    zh: zhPrice ? `可以安排车去科尔赛湖，${zhPrice}。` : "可以安排车去科尔赛湖。",
+    kk: `Көлік бар, апарып тастаймыз${tail(" — ", price)}.`,
+    ru: `Машина есть, можем отвезти${tail(" — ", price)}.`,
+    en: `We have a car and can drive you${tail(" — ", price)}.`,
+    zh: `我们有车，可以接送您${tail("，", zhPrice)}。`,
+  };
+}
+
+export type CarService = { priceKzt: number | null; name: Localized } | null | undefined;
+
+/** The car service's name in all four languages, or null when any is missing. */
+function carName(car: CarService): Localized | null {
+  const n = car?.name;
+  return n && n.kk?.trim() && n.ru?.trim() && n.en?.trim() && n.zh?.trim() ? n : null;
+}
+
+/** The ready-made car question, used when the guest ticks the car box without writing anything. */
+export function carQuestion(car: CarService): Localized {
+  const n = carName(car);
+  if (n) {
+    return {
+      kk: `«${n.kk}» қызметін алғымыз келеді. Бола ма?`,
+      ru: `Хотим заказать «${n.ru}». Это возможно?`,
+      en: `We'd like "${n.en}". Is that possible?`,
+      zh: `我们想预订「${n.zh}」，可以吗？`,
+    };
+  }
+  return {
+    kk: "Көлік ұйымдастыра аласыз ба?",
+    ru: "Можете организовать машину?",
+    en: "Can you arrange a car?",
+    zh: "可以帮我们安排车吗？",
   };
 }
 
@@ -48,8 +87,15 @@ export function formatRange(from: string, to: string, lang: Lang): string {
   if (lang === "en")
     return fm === tm ? `${MONTHS.en[fm - 1]} ${fd}–${td}` : `${MONTHS.en[fm - 1]} ${fd} – ${MONTHS.en[tm - 1]} ${td}`;
   if (lang === "kk")
-    return fm === tm ? `${MONTHS.kk[fm - 1]} ${fd}–${td}` : `${MONTHS.kk[fm - 1]} ${fd} – ${MONTHS.kk[tm - 1]} ${td}`;
+    return fm === tm ? `${fd}–${td} ${MONTHS.kk[fm - 1]}` : `${fd} ${MONTHS.kk[fm - 1]} – ${td} ${MONTHS.kk[tm - 1]}`;
   return fm === tm ? `${fd}–${td} ${MONTHS.ru[fm - 1]}` : `${fd} ${MONTHS.ru[fm - 1]} – ${td} ${MONTHS.ru[tm - 1]}`;
+}
+
+/** True for a real calendar day in YYYY-MM-DD ("2027-02-30" is not: Date.parse would roll it into March). */
+export function isRealDate(s: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(`${s}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
 }
 
 export function nightsBetween(from: string, to: string): number {
@@ -83,6 +129,19 @@ export function whatsappMessage(p: {
   if (p.questionRu) lines.push(`Вопрос: ${p.questionRu}`);
   lines.push(`Ответить гостю на его языке: ${p.replyUrl}`);
   return lines.join("\n");
+}
+
+/**
+ * The Russian WhatsApp note a guest sends when they add a message after the first request.
+ * No reply key in it (the sender may not be the guest): the host answers from the dashboard
+ * or from the reply link in the first request message.
+ */
+export function followUpMessage(p: { guestName: string; code: string; textRu: string; dashboardUrl: string }): string {
+  return [
+    `Новое сообщение от гостя ${p.guestName} (заявка ${p.code} через Qonaq):`,
+    p.textRu,
+    `Ответить можно по ссылке из первой заявки или в вашем кабинете: ${p.dashboardUrl}`,
+  ].join("\n");
 }
 
 export function waLink(phoneDigits: string, text: string): string {

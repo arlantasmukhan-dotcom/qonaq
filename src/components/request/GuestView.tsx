@@ -201,6 +201,8 @@ function FollowUp({ code, lang, onSent }: { code: string; lang: Lang; onSent: (m
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  // WhatsApp note for the message just sent: the host gets no push, so the guest forwards it.
+  const [notifyUrl, setNotifyUrl] = useState<string | null>(null);
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
@@ -208,6 +210,7 @@ function FollowUp({ code, lang, onSent }: { code: string; lang: Lang; onSent: (m
     if (!v || busy) return;
     setBusy(true);
     setErr(null);
+    setNotifyUrl(null);
     try {
       const res = await fetch(`/api/requests/${code}/message`, {
         method: "POST",
@@ -219,8 +222,9 @@ function FollowUp({ code, lang, onSent }: { code: string; lang: Lang; onSent: (m
         setErr(b.error?.code === "ai_no_key" ? t.errNoKey : b.error?.code === "ai_failed" ? t.errAi : t.msgError);
         return;
       }
-      const j = (await res.json()) as { message: Message };
+      const j = (await res.json()) as { message: Message; waUrl?: string | null };
       onSent(j.message);
+      setNotifyUrl(j.waUrl ?? null);
       setText("");
     } catch {
       setErr(t.errNetwork);
@@ -251,6 +255,21 @@ function FollowUp({ code, lang, onSent }: { code: string; lang: Lang; onSent: (m
       <button type="submit" disabled={busy || !text.trim()} className="btn btn-primary w-full">
         {busy ? t.sendingMsg : t.send}
       </button>
+      {notifyUrl && (
+        <div className="animate-rise space-y-2 rounded-2xl bg-ok-soft p-3" aria-live="polite">
+          <p className="text-sm font-semibold text-ok">✓ {t.sentNotice}</p>
+          <a
+            href={notifyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setNotifyUrl(null)}
+            className="btn btn-whatsapp w-full flex-col !gap-0"
+          >
+            <span>{t.notifyWa}</span>
+            <span className="text-xs font-semibold opacity-80">{t.notifyWaSub}</span>
+          </a>
+        </div>
+      )}
     </form>
   );
 }

@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { draftListing } from "@/lib/ai";
 import { editToken, newId, slugify } from "@/lib/codes";
+import { normalizeWhatsapp } from "@/lib/phone";
 import { aiFail, clientIp, fail, json, readJson, setEditCookie } from "@/lib/http";
 import { allow } from "@/lib/ratelimit";
 import { attachPhotos, insertListing, slugTaken } from "@/lib/repo";
@@ -11,7 +12,8 @@ const Body = z.object({
   text: z.string().trim().min(10).max(4000),
   lang: z.enum(["kk", "ru"]),
   whatsapp: z.string().min(5).max(30),
-  village: z.string().trim().max(60).optional(),
+  // Required: with no village said aloud and none typed, the page would land at /kazakhstan/….
+  village: z.string().trim().min(1, "Village is required").max(60),
   photoIds: z.array(z.string().uuid()).max(6).default([]),
 });
 
@@ -29,8 +31,8 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) return fail("bad_request", parsed.error.issues[0]?.message ?? "Invalid body", 400);
   const body = parsed.data;
 
-  const whatsapp = body.whatsapp.replace(/\D/g, "").replace(/^8(?=7\d{9}$)/, "7");
-  if (whatsapp.length < 10 || whatsapp.length > 15) return fail("bad_request", "Invalid WhatsApp number", 400);
+  const whatsapp = normalizeWhatsapp(body.whatsapp);
+  if (!whatsapp) return fail("bad_request", "Invalid WhatsApp number", 400);
 
   let draft;
   try {

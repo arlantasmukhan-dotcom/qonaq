@@ -3,6 +3,7 @@ import Image from "next/image";
 import { headers } from "next/headers";
 import { LiveScreen } from "@/components/live/LiveScreen";
 import "@/components/live/live.css";
+import { listVillages } from "@/lib/repo";
 
 export const metadata: Metadata = { title: "Live", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -28,7 +29,9 @@ function Qr({ url, className }: { url: string; className: string }) {
 
 export default async function LivePage() {
   const origin = await originOf();
-  const catalogUrl = `${origin}/saty`;
+  // One village: straight to its catalog. Several (a host from Burabay joined): the home page lists them all.
+  const villages = await listVillages().catch(() => []);
+  const catalogUrl = villages.length === 1 ? `${origin}/${villages[0]!.village}` : `${origin}/#catalog-title`;
   const newUrl = `${origin}/new`;
 
   return (

@@ -4,9 +4,9 @@ import Link from "next/link";
 export function Wordmark({ tone = "dark" }: { tone?: "light" | "dark" }) {
   const color = tone === "light" ? "text-paper" : "text-ink";
   return (
-    <Link href="/" aria-label="Qonaq" className={`inline-flex items-center gap-3 ${color}`}>
-      <span aria-hidden className="orn orn-emblem h-10 sm:h-11" />
-      <span aria-hidden className="font-serif text-[1.375rem] font-semibold leading-none tracking-[0.32em] sm:text-2xl">
+    <Link href="/" aria-label="Qonaq" className={`inline-flex items-center gap-2.5 sm:gap-3 ${color}`}>
+      <span aria-hidden className="orn orn-emblem h-9 sm:h-11" />
+      <span aria-hidden className="font-serif text-lg font-semibold leading-none tracking-[0.2em] sm:text-2xl sm:tracking-[0.32em]">
         QONAQ
       </span>
     </Link>

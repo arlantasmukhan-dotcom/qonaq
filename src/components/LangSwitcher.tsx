@@ -55,7 +55,7 @@ export function LangSwitcher({
           type="button"
           onClick={() => pick(l)}
           aria-pressed={l === current}
-          className={`min-w-11 rounded-full px-2.5 py-1.5 transition-colors ${
+          className={`min-w-11 whitespace-nowrap rounded-full px-2.5 py-1.5 transition-colors ${
             l === current ? (tone === "dark" ? "bg-paper text-ink" : "bg-ink text-paper") : ""
           }`}
         >

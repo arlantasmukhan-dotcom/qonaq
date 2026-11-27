@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LangSwitcher } from "@/components/LangSwitcher";
+import { Wordmark } from "@/components/landing/Wordmark";
 import type { Lang } from "@/lib/types";
 
 /** Slim top bar: back link (or logo) on the left, language switcher on the right. */
@@ -20,7 +21,7 @@ export function TouristHeader({
         <Link
           href={backHref}
           className={`inline-flex min-h-12 items-center gap-1 pr-3 text-sm font-bold ${
-            tone === "dark" ? "text-white" : "text-patina"
+            tone === "dark" ? "text-white" : "text-ink"
           }`}
         >
           <span aria-hidden className="text-lg leading-none">
@@ -29,9 +30,9 @@ export function TouristHeader({
           {backLabel}
         </Link>
       ) : (
-        <Link href="/" className="inline-flex min-h-12 items-center text-lg font-extrabold tracking-tight text-patina">
-          Qonaq
-        </Link>
+        <span className="inline-flex min-h-12 items-center">
+          <Wordmark tone={tone === "dark" ? "light" : "dark"} />
+        </span>
       )}
       <LangSwitcher current={lang} tone={tone} />
     </div>

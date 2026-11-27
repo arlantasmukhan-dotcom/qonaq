@@ -84,10 +84,8 @@ h2 {
   }
   .orn-strip-vine { --orn: url("/art/orn/strip-vine.png"); }
   .orn-strip-horn { --orn: url("/art/orn/strip-horn.png"); }
-}
 
-/* Shared building blocks. Screens compose these instead of re-inventing buttons and cards. */
-@layer components {
+  /* Shared building blocks. Screens compose these instead of re-inventing buttons and cards. */
   .card {
     background: var(--color-paper);
     border: 1px solid var(--color-line);

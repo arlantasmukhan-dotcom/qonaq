@@ -20,7 +20,7 @@ export function TouristHeader({
         <Link
           href={backHref}
           className={`inline-flex min-h-12 items-center gap-1 pr-3 text-sm font-bold ${
-            tone === "dark" ? "text-white" : "text-teal"
+            tone === "dark" ? "text-white" : "text-patina"
           }`}
         >
           <span aria-hidden className="text-lg leading-none">
@@ -29,7 +29,7 @@ export function TouristHeader({
           {backLabel}
         </Link>
       ) : (
-        <Link href="/" className="inline-flex min-h-12 items-center text-lg font-extrabold tracking-tight text-teal">
+        <Link href="/" className="inline-flex min-h-12 items-center text-lg font-extrabold tracking-tight text-patina">
           Qonaq
         </Link>
       )}

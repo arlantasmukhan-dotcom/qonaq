@@ -134,7 +134,7 @@ export function ReviewCard({
         onSave={saveNum("priceGuests")}
       />
 
-      <div className={`rounded-2xl border p-3 ${missing.breakfast ? "border-saffron bg-saffron-soft" : "border-line bg-paper"}`}>
+      <div className={`rounded-2xl border p-3 ${missing.breakfast ? "border-clay bg-clay-soft" : "border-line bg-paper"}`}>
         <span className="label">{t.fBreakfast}</span>
         {missing.breakfast && <p className="mb-2 font-bold">{t.missing}</p>}
         <div role="group" aria-label={t.fBreakfast} className="grid grid-cols-2 gap-2">
@@ -145,7 +145,7 @@ export function ReviewCard({
               aria-pressed={listing.breakfastIncluded === v}
               onClick={() => void patch({ breakfastIncluded: v })}
               className={`min-h-12 rounded-xl border-2 text-sm font-bold ${
-                listing.breakfastIncluded === v ? "border-teal bg-teal text-white" : "border-line bg-white text-ink"
+                listing.breakfastIncluded === v ? "border-patina bg-patina text-white" : "border-line bg-white text-ink"
               }`}
             >
               {v ? t.breakfastYes : t.breakfastNo}
@@ -199,8 +199,8 @@ export function ReviewCard({
       <LocationField t={t} lat={listing.lat} lng={listing.lng} onSave={(pos) => patch(pos)} />
 
       <section className="card mt-6 overflow-hidden" aria-label={t.previewTitle}>
-        <div className="bg-teal-soft p-3">
-          <h2 className="mb-2 text-sm font-extrabold text-teal-dark">{t.previewTitle}</h2>
+        <div className="bg-patina-soft p-3">
+          <h2 className="mb-2 text-sm font-extrabold text-patina-dark">{t.previewTitle}</h2>
           <div role="group" aria-label={t.previewTitle} className="grid grid-cols-4 gap-1">
             {PREVIEW_ORDER.map((l) => (
               <button
@@ -208,7 +208,7 @@ export function ReviewCard({
                 type="button"
                 aria-pressed={preview === l}
                 onClick={() => setPreview(l)}
-                className={`min-h-11 rounded-full px-1 text-xs font-bold ${preview === l ? "bg-teal text-white" : "bg-white text-teal-dark"}`}
+                className={`min-h-11 rounded-full px-1 text-xs font-bold ${preview === l ? "bg-patina text-white" : "bg-white text-patina-dark"}`}
               >
                 {LANG_LABEL[l]}
               </button>

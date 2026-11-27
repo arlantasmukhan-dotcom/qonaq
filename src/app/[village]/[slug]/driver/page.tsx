@@ -27,13 +27,13 @@ export default async function DriverPage({ params }: Props) {
   return (
     <main className="mx-auto min-h-dvh w-full max-w-[34rem] bg-white px-4 pb-10 pt-3 text-black">
       <div className="flex items-center justify-between gap-3 py-1">
-        <Link href={`/${village}/${slug}`} className="inline-flex min-h-12 items-center pr-3 text-sm font-bold text-teal">
+        <Link href={`/${village}/${slug}`} className="inline-flex min-h-12 items-center pr-3 text-sm font-bold text-patina">
           ‹ {t.back}
         </Link>
         <LangSwitcher current={lang} />
       </div>
 
-      <p className="mt-2 rounded-2xl bg-saffron-soft px-4 py-3 text-sm font-semibold leading-snug">{t.driverExplain}</p>
+      <p className="mt-2 rounded-2xl bg-clay-soft px-4 py-3 text-sm font-semibold leading-snug">{t.driverExplain}</p>
 
       <section className="mt-5 space-y-5" lang="kk">
         <p className="text-[2.1rem] font-extrabold leading-tight tracking-tight">
@@ -42,7 +42,7 @@ export default async function DriverPage({ params }: Props) {
         <p className="text-2xl font-bold leading-tight" lang="ru">
           Село {listing.villageName.ru}, гостевой дом «{hostRu}».
         </p>
-        <p className="text-3xl font-extrabold leading-tight text-teal-dark" lang="ru">
+        <p className="text-3xl font-extrabold leading-tight text-patina-dark" lang="ru">
           Тел.: <a href={`tel:+${listing.whatsapp}`}>{phone}</a>
         </p>
         <div className="rounded-2xl border-2 border-black p-4">

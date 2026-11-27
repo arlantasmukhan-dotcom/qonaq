@@ -16,7 +16,7 @@ export function HouseCard({ listing, lang, index }: { listing: Listing; lang: La
       className="card animate-rise block overflow-hidden active:scale-[0.99]"
       style={{ animationDelay: `${Math.min(index, 5) * 60}ms` }}
     >
-      <div className="relative aspect-[16/10] w-full bg-teal-soft">
+      <div className="relative aspect-[16/10] w-full bg-patina-soft">
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -42,7 +42,7 @@ export function HouseCard({ listing, lang, index }: { listing: Listing; lang: La
           <div className="min-w-0">
             {price && (
               <p>
-                <span className="text-xl font-extrabold text-teal">{price.big}</span>{" "}
+                <span className="text-xl font-extrabold text-patina">{price.big}</span>{" "}
                 <span className="text-sm text-muted">{t.perNight}</span>
                 {price.small && <span className="block text-xs text-muted">{price.small}</span>}
               </p>

@@ -16,7 +16,15 @@ export interface LandingCopy {
   openCatalog: string;
   footer: string[];
   demoNote: string;
+  demoText: string;
+  heroPhotoAlt: string;
+  heroPhotoPlace: string;
+  placesTitle: string;
+  placesSub: string;
+  places: Record<PlaceId, string>;
 }
+
+export type PlaceId = "kolsai" | "kaindy" | "charyn" | "dune" | "torysh";
 
 function ruHouses(n: number) {
   const m10 = n % 10;
@@ -47,6 +55,12 @@ export const LANDING: Record<Lang, LandingCopy> = {
     openCatalog: "Смотреть дома",
     footer: ["0% комиссии", "WhatsApp", "работает без интернета"],
     demoNote: "Пример",
+    demoText: "Хозяин говорит по-казахски или по-русски. Гость сразу читает на своём языке: китайском, английском или русском.",
+    heroPhotoAlt: "Белые меловые склоны и скалы Бозжыры на закате",
+    heroPhotoPlace: "Бозжыра, Мангистау",
+    placesTitle: "Куда едут гости",
+    placesSub: "Сельские дома стоят рядом с местами, ради которых едут в Казахстан.",
+    places: { kolsai: "Кольсайские озёра", kaindy: "Озеро Каинды", charyn: "Чарынский каньон", dune: "Поющий бархан", torysh: "Долина шаров Торыш" },
   },
   kk: {
     tagline: "Қазақстанның қонақ үйлері",
@@ -68,6 +82,12 @@ export const LANDING: Record<Lang, LandingCopy> = {
     openCatalog: "Үйлерді қарау",
     footer: ["0% комиссия", "WhatsApp", "интернетсіз жұмыс істейді"],
     demoNote: "Мысал",
+    demoText: "Үй иесі қазақша немесе орысша сөйлейді. Қонақ бірден өз тілінде оқиды: қытайша, ағылшынша немесе орысша.",
+    heroPhotoAlt: "Күн батқандағы Бозжыраның ақ бор беткейлері мен жартастары",
+    heroPhotoPlace: "Бозжыра, Маңғыстау",
+    placesTitle: "Қонақтар қайда барады",
+    placesSub: "Ауылдағы үйлер Қазақстанға адамдар әдейі келетін жерлердің жанында.",
+    places: { kolsai: "Көлсай көлдері", kaindy: "Қайыңды көлі", charyn: "Шарын шатқалы", dune: "Әнші құм", torysh: "Торыш шарлар аңғары" },
   },
   en: {
     tagline: "Guesthouses of Kazakhstan",
@@ -89,6 +109,12 @@ export const LANDING: Record<Lang, LandingCopy> = {
     openCatalog: "Browse guesthouses",
     footer: ["0% commission", "WhatsApp", "works offline"],
     demoNote: "Sample",
+    demoText: "The host speaks Kazakh or Russian. You read it right away in Chinese, English or Russian.",
+    heroPhotoAlt: "White chalk slopes and rock towers of Bozzhyra at sunset",
+    heroPhotoPlace: "Bozzhyra, Mangystau",
+    placesTitle: "Where guests go",
+    placesSub: "Village guesthouses sit close to the places people travel to Kazakhstan for.",
+    places: { kolsai: "Kolsai Lakes", kaindy: "Lake Kaindy", charyn: "Charyn Canyon", dune: "Singing Dune", torysh: "Torysh, valley of stone balls" },
   },
   zh: {
     tagline: "哈萨克斯坦民宿",
@@ -110,6 +136,12 @@ export const LANDING: Record<Lang, LandingCopy> = {
     openCatalog: "浏览民宿",
     footer: ["零佣金", "WhatsApp", "离线可用"],
     demoNote: "示例",
+    demoText: "房东说哈萨克语或俄语，您立即就能用中文、英语或俄语阅读。",
+    heroPhotoAlt: "日落时博兹日拉的白色白垩山坡和岩柱",
+    heroPhotoPlace: "博兹日拉，曼格斯套",
+    placesTitle: "游客去哪里",
+    placesSub: "乡村民宿就在人们专程前往哈萨克斯坦的景点附近。",
+    places: { kolsai: "科尔赛湖", kaindy: "凯音迪湖", charyn: "恰伦峡谷", dune: "鸣沙山", torysh: "托雷什石球谷" },
   },
 };
 

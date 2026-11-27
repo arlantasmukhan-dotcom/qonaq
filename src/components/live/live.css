@@ -1,8 +1,8 @@
 .lv-screen {
   background:
-    radial-gradient(1200px 700px at 85% -10%, rgb(232 163 61 / 0.16), transparent 60%),
-    radial-gradient(900px 700px at -10% 110%, rgb(47 143 91 / 0.16), transparent 60%),
-    linear-gradient(160deg, #0b4447 0%, #07282a 100%);
+    radial-gradient(1200px 700px at 85% -10%, rgb(214 180 140 / 0.14), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgb(86 105 95 / 0.22), transparent 60%),
+    linear-gradient(160deg, #3a3631 0%, #221f1c 100%);
 }
 
 /* New events push older ones down smoothly: grid row animates 0fr -> 1fr. */
@@ -49,13 +49,13 @@
   height: 0.95em;
   margin-left: 0.08em;
   vertical-align: -0.1em;
-  background: var(--color-saffron);
+  background: var(--color-dune);
   animation: lv-blink 0.8s steps(1) infinite;
 }
 @keyframes lv-blink { 50% { opacity: 0; } }
 
 .lv-beam {
-  background: linear-gradient(90deg, transparent, var(--color-saffron), transparent);
+  background: linear-gradient(90deg, transparent, var(--color-dune), transparent);
   background-size: 200% 100%;
   animation: lv-beam 1.6s linear infinite;
 }

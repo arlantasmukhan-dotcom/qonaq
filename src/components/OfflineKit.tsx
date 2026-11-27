@@ -15,7 +15,7 @@ import { useEffect, useSyncExternalStore } from "react";
  *   `hidden` attribute; this component removes it.
  */
 
-const RESERVED = new Set(["api", "new", "host", "poster", "live", "offline", "r", "_next"]);
+const RESERVED = new Set(["api", "new", "host", "poster", "live", "offline", "r", "_next", "art"]);
 
 const BANNER: Record<string, string> = {
   ru: "Нет сети — показана сохранённая версия",
@@ -140,7 +140,7 @@ export function OfflineKit() {
       role="status"
       className="fixed inset-x-0 top-0 z-[100] flex h-8 items-center justify-center gap-2 bg-ink px-3 text-xs font-bold text-white"
     >
-      <span aria-hidden className="h-2 w-2 rounded-full bg-saffron" />
+      <span aria-hidden className="h-2 w-2 rounded-full bg-clay" />
       <span className="truncate">{bannerText()}</span>
     </div>
   );

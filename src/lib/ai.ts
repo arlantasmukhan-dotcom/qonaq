@@ -9,6 +9,24 @@ const MODEL = process.env.QONAQ_MODEL || "claude-opus-5-5";
 const FAST = process.env.QONAQ_FAST !== "0";
 
 let client: Anthropic | null = null;
+/**
+ * Runs a request in fast mode when allowed, and in standard mode when fast mode is rate-limited.
+ * Some accounts have no fast-mode quota at all (a 429 on every fast request), so after one such
+ * 429 the server stays on standard mode for 10 minutes instead of paying the extra round trip.
+ */
+let fastBlockedUntil = 0;
+async function withFastFallback<T>(run: (fast: boolean) => Promise<T>): Promise<T> {
+  if (!FAST || Date.now() < fastBlockedUntil) return run(false);
+  try {
+    return await run(true);
+  } catch (err) {
+    if (!(err instanceof Anthropic.RateLimitError)) throw err;
+    fastBlockedUntil = Date.now() + 10 * 60_000;
+    console.warn("[ai] fast mode rate-limited, using standard mode for 10 min");
+    return run(false);
+  }
+}
+
 function getClient() {
   client ??= new Anthropic({ timeout: 45_000, maxRetries: 1 });
   return client;
@@ -125,11 +143,11 @@ export async function draftListing(input: { text: string; lang: Lang; villageHin
     ? `\nThe host also typed the village "${input.villageHint}" in a form field. If their words above name a village, use the spoken one; use the typed one only when the words name none.`
     : "";
   try {
-    const response = await getClient().beta.messages.parse(
+    const response = await withFastFallback((fast) => getClient().beta.messages.parse(
       {
       model: MODEL,
       max_tokens: 6000,
-      ...(FAST ? { speed: "fast" as const } : {}),
+      ...(fast ? { speed: "fast" as const } : {}),
       betas: ["server-side-fallback-2026-07-01"],
       fallbacks: "default",
       output_config: { effort: "low", format: betaZodOutputFormat(ListingDraftSchema) },
@@ -142,7 +160,7 @@ export async function draftListing(input: { text: string; lang: Lang; villageHin
       ],
       },
       { maxRetries: 0, timeout: 50_000 },
-    );
+    ));
     if (response.stop_reason === "refusal") throw new AiError("refused", "refused");
     if (!response.parsed_output) throw new AiError(`no parsed output (stop: ${response.stop_reason})`, "failed");
     return response.parsed_output;
@@ -177,11 +195,11 @@ export async function translateMessage(text: string, context?: string): Promise<
   try {
     // One attempt within 22 s: the routes that translate stop at 30 s on serverless hosts, and a clean
     // "AI failed" reply beats the platform cutting the request mid-call.
-    const response = await getClient().beta.messages.parse(
+    const response = await withFastFallback((fast) => getClient().beta.messages.parse(
       {
       model: MODEL,
       max_tokens: 2000,
-      ...(FAST ? { speed: "fast" as const } : {}),
+      ...(fast ? { speed: "fast" as const } : {}),
       betas: ["server-side-fallback-2026-07-01"],
       fallbacks: "default",
       output_config: { effort: "low", format: betaZodOutputFormat(TranslationSchema) },
@@ -194,7 +212,7 @@ export async function translateMessage(text: string, context?: string): Promise<
       ],
       },
       { maxRetries: 0, timeout: 22_000 },
-    );
+    ));
     if (response.stop_reason === "refusal") throw new AiError("refused", "refused");
     if (!response.parsed_output) throw new AiError(`no parsed output (stop: ${response.stop_reason})`, "failed");
     return response.parsed_output;

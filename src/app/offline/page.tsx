@@ -16,7 +16,7 @@ export default function OfflinePage() {
     <main className="page">
       <div className="mt-6 flex items-center gap-2.5">
         <Image src="/icon.svg" alt="" width={40} height={40} unoptimized />
-        <span className="text-2xl font-extrabold tracking-tight text-teal-dark">Qonaq</span>
+        <span className="text-2xl font-extrabold tracking-tight text-patina-dark">Qonaq</span>
       </div>
       <ul className="mt-6 grid list-none gap-3 p-0">
         {ROWS.map((r) => (

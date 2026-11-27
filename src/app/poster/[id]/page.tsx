@@ -33,10 +33,10 @@ export default async function PosterPage({ params }: { params: Promise<{ id: str
     <div className="poster-root">
       <style>{`
         @page { size: A4; margin: 0 }
-        .poster-root { background: #e9e2d6; min-height: 100vh; padding: 12px 0 40px }
-        .poster-sheet { width: 210mm; max-width: 100%; min-height: 297mm; margin: 0 auto; background: #fffdf9; display: flex; flex-direction: column; box-shadow: 0 8px 40px rgb(0 0 0 / .15); overflow: hidden }
+        .poster-root { background: #e7e1d7; min-height: 100vh; padding: 12px 0 40px }
+        .poster-sheet { width: 210mm; max-width: 100%; min-height: 297mm; margin: 0 auto; background: #f2eee7; display: flex; flex-direction: column; box-shadow: 0 8px 40px rgb(0 0 0 / .15); overflow: hidden }
         .poster-photo { height: 100mm; width: 100%; object-fit: cover; display: block }
-        .poster-photo-empty { height: 100mm; background: linear-gradient(135deg, #0f5e63, #e8a33d) }
+        .poster-photo-empty { height: 100mm; background: linear-gradient(135deg, #56695f, #a0603f) }
         @media (max-width: 800px) { .poster-sheet { font-size: 0.8em } .poster-photo, .poster-photo-empty { height: 55vw } }
         @media print {
           .poster-root { background: #fff; padding: 0; min-height: 0 }
@@ -62,7 +62,7 @@ export default async function PosterPage({ params }: { params: Promise<{ id: str
         )}
 
         <div className="flex flex-1 flex-col px-[12mm] pb-[10mm] pt-[8mm]">
-          <div className="flex items-center gap-2 text-teal">
+          <div className="flex items-center gap-2 text-patina">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/icon.svg" alt="" width={36} height={36} />
             <span className="text-2xl font-extrabold">Qonaq</span>
@@ -89,7 +89,7 @@ export default async function PosterPage({ params }: { params: Promise<{ id: str
             <div>
               {listing.priceKzt !== null && (
                 <>
-                  <p className="text-[2.4em] font-extrabold leading-none text-teal">{formatKzt(listing.priceKzt)}</p>
+                  <p className="text-[2.4em] font-extrabold leading-none text-patina">{formatKzt(listing.priceKzt)}</p>
                   <p className="mt-1 text-sm font-semibold text-muted">
                     {LANGS.map((l) => PER_NIGHT[l]).join(" · ")}
                     {listing.priceGuests ? ` · ${listing.priceGuests} ` : ""}
@@ -97,7 +97,7 @@ export default async function PosterPage({ params }: { params: Promise<{ id: str
                   </p>
                 </>
               )}
-              <p className="mt-5 max-w-[85mm] rounded-2xl bg-saffron px-4 py-3 text-lg font-extrabold leading-snug text-ink">
+              <p className="mt-5 max-w-[85mm] rounded-2xl bg-clay px-4 py-3 text-lg font-extrabold leading-snug text-paper">
                 {t.posterScan}
               </p>
             </div>

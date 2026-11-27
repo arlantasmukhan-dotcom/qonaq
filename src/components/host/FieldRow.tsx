@@ -50,7 +50,7 @@ export function FieldRow({
     return (
       <div
         className={`flex items-start gap-2 rounded-2xl border p-3 ${
-          missing ? "border-saffron bg-saffron-soft" : "border-line bg-paper"
+          missing ? "border-clay bg-clay-soft" : "border-line bg-paper"
         }`}
       >
         <button
@@ -69,7 +69,7 @@ export function FieldRow({
             <span className="block whitespace-pre-line text-base font-semibold leading-snug">{display ?? value}</span>
           )}
         </button>
-        <span className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center text-teal" aria-hidden>
+        <span className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center text-patina" aria-hidden>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 20h4L19 9l-4-4L4 16z" />
           </svg>
@@ -85,7 +85,7 @@ export function FieldRow({
 
   return (
     // col-span-2: a half-width card (rooms, check-in) takes the whole row while editing.
-    <div className="col-span-2 rounded-2xl border-2 border-teal bg-paper p-3">
+    <div className="col-span-2 rounded-2xl border-2 border-patina bg-paper p-3">
       <label className="label" htmlFor={id}>
         {label}
       </label>

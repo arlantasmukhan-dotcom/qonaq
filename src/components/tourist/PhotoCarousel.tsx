@@ -9,7 +9,7 @@ export function PhotoCarousel({ photoIds, alt }: { photoIds: string[]; alt: stri
 
   if (photoIds.length === 0) {
     return (
-      <div className="flex aspect-[4/3] w-full items-center justify-center rounded-[var(--radius-card)] bg-teal-soft text-5xl">
+      <div className="flex aspect-[4/3] w-full items-center justify-center rounded-[var(--radius-card)] bg-patina-soft text-5xl">
         🏡
       </div>
     );
@@ -32,7 +32,7 @@ export function PhotoCarousel({ photoIds, alt }: { photoIds: string[]; alt: stri
       <div
         ref={ref}
         onScroll={onScroll}
-        className="flex aspect-[4/3] w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-[var(--radius-card)] bg-teal-soft [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex aspect-[4/3] w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-[var(--radius-card)] bg-patina-soft [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {photoIds.map((id, i) => (
           // eslint-disable-next-line @next/next/no-img-element

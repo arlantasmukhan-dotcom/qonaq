@@ -47,7 +47,7 @@ export function LocationField({
   }
 
   return (
-    <div className={`rounded-2xl border p-3 ${has ? "border-line bg-paper" : "border-saffron bg-saffron-soft"}`}>
+    <div className={`rounded-2xl border p-3 ${has ? "border-line bg-paper" : "border-clay bg-clay-soft"}`}>
       <span className="label">{t.fLocation}</span>
       {has ? (
         <p className="text-sm font-semibold">
@@ -56,7 +56,7 @@ export function LocationField({
             href={`https://2gis.kz/geo/${lng},${lat}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-bold text-teal underline"
+            className="font-bold text-patina underline"
           >
             {t.locCheck}
           </a>

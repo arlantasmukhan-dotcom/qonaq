@@ -126,7 +126,7 @@ export function NewForm({ t, initialLang }: { t: HostDict; initialLang: DictLang
               aria-pressed={dictLang === l}
               onClick={() => pickLang(l)}
               className={`min-h-11 min-w-28 rounded-full px-4 text-sm font-bold transition-colors ${
-                dictLang === l ? "bg-teal text-white" : "text-muted"
+                dictLang === l ? "bg-patina text-white" : "text-muted"
               }`}
             >
               {LANG_LABEL[l]}
@@ -141,18 +141,18 @@ export function NewForm({ t, initialLang }: { t: HostDict; initialLang: DictLang
             disabled={!speech.supported}
             aria-pressed={speech.listening}
             aria-label={speech.listening ? t.micListening : t.micTap}
-            className={`flex h-32 w-32 items-center justify-center rounded-full bg-saffron text-ink shadow-lg transition-transform active:scale-95 disabled:opacity-40 ${
+            className={`flex h-32 w-32 items-center justify-center rounded-full bg-clay text-paper shadow-lg transition-transform active:scale-95 disabled:opacity-40 ${
               speech.listening ? "animate-mic scale-105" : ""
             }`}
           >
             <MicIcon />
           </button>
         </div>
-        <p className="mt-3 text-sm font-bold text-teal-dark" aria-live="polite">
+        <p className="mt-3 text-sm font-bold text-patina-dark" aria-live="polite">
           {speech.listening ? t.micListening : t.micTap}
         </p>
 
-        {!speech.supported && <p className="mt-3 rounded-xl bg-saffron-soft p-3 text-sm text-ink">{t.errNoSpeech}</p>}
+        {!speech.supported && <p className="mt-3 rounded-xl bg-clay-soft p-3 text-sm text-ink">{t.errNoSpeech}</p>}
         {speechErr && (
           <p role="alert" className="mt-3 rounded-xl bg-busy-soft p-3 text-sm font-semibold text-busy">
             {speechErr}
@@ -186,8 +186,8 @@ export function NewForm({ t, initialLang }: { t: HostDict; initialLang: DictLang
             </button>
           )}
         </div>
-        <details className="rounded-xl bg-teal-soft p-3 text-sm" open={!speech.text}>
-          <summary className="min-h-6 cursor-pointer font-bold text-teal-dark">{t.hintTitle}</summary>
+        <details className="rounded-xl bg-patina-soft p-3 text-sm" open={!speech.text}>
+          <summary className="min-h-6 cursor-pointer font-bold text-patina-dark">{t.hintTitle}</summary>
           <p className="mt-2 text-muted">{t.hintList}</p>
           <p className="mt-2 italic text-ink">«{t.hintExample}»</p>
         </details>
@@ -244,14 +244,14 @@ export function NewForm({ t, initialLang }: { t: HostDict; initialLang: DictLang
 
       {busy && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-teal-dark px-6 text-center text-white"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-patina-dark px-6 text-center text-white"
           role="dialog"
           aria-modal="true"
           aria-label={t.p5}
         >
           <div className="relative mb-8 flex h-28 w-28 items-center justify-center">
-            <span className="absolute inset-0 animate-ping rounded-full bg-saffron/40" />
-            <span className="absolute inset-3 animate-pulse rounded-full bg-saffron/70" />
+            <span className="absolute inset-0 animate-ping rounded-full bg-clay/40" />
+            <span className="absolute inset-3 animate-pulse rounded-full bg-clay/70" />
             <span className="relative text-ink">
               <MicIcon />
             </span>
@@ -264,7 +264,7 @@ export function NewForm({ t, initialLang }: { t: HostDict; initialLang: DictLang
               <span
                 key={l}
                 className={`rounded-full px-4 py-2 text-sm font-bold transition-all duration-500 ${
-                  i < lit || (i === 0 && step >= 2) ? "scale-110 bg-saffron text-ink" : "bg-white/15 text-white/60"
+                  i < lit || (i === 0 && step >= 2) ? "scale-110 bg-clay text-paper" : "bg-white/15 text-white/60"
                 }`}
               >
                 {LANG_LABEL[l]}

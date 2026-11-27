@@ -1,3 +1,27 @@
+/* Darken the photo only where words sit: a band under the header and the lower third. */
+.hero-shade {
+  background:
+    linear-gradient(to bottom, rgb(43 40 36 / 0.55) 0%, rgb(43 40 36 / 0) 22%),
+    linear-gradient(to top, rgb(33 30 27 / 0.82) 0%, rgb(33 30 27 / 0.45) 38%, rgb(33 30 27 / 0) 68%),
+    linear-gradient(to right, rgb(33 30 27 / 0.4) 0%, rgb(33 30 27 / 0) 60%);
+}
+
+.hero-ghost {
+  color: var(--color-paper);
+  border-color: rgb(242 238 231 / 0.6);
+  background: rgb(43 40 36 / 0.2);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.hero-ghost:hover {
+  background: rgb(242 238 231 / 0.14);
+}
+
+/* Photo frame for the places grid: the caption sits on a soft shade at the bottom. */
+.place-shade {
+  background: linear-gradient(to top, rgb(33 30 27 / 0.7), rgb(33 30 27 / 0) 55%);
+}
+
 .ld-bubble {
   opacity: 0;
   animation-duration: 9s;
@@ -29,7 +53,7 @@
   display: block;
   width: 4px;
   border-radius: 2px;
-  background: var(--color-saffron);
+  background: var(--color-dune);
   height: 6px;
   animation: ld-wave 1s ease-in-out infinite;
 }

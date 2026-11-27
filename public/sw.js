@@ -10,7 +10,7 @@
  *
  * Bump VERSION to invalidate every cache.
  */
-const VERSION = "v2";
+const VERSION = "v3";
 const PAGES = `qonaq-pages-${VERSION}`;
 const ASSETS = `qonaq-assets-${VERSION}`;
 const API = `qonaq-api-${VERSION}`;
@@ -22,7 +22,7 @@ const MAX_URLS = 40;
 const MATCH = { ignoreVary: true };
 
 // First path segments that are app routes, never houses or villages.
-const RESERVED = new Set(["api", "new", "host", "poster", "live", "offline", "r", "_next", "icon.svg", "sw.js"]);
+const RESERVED = new Set(["api", "new", "host", "poster", "live", "offline", "r", "_next", "icon.svg", "sw.js", "art"]);
 
 function classify(url) {
   const path = url.pathname.replace(/\/+$/, "") || "/";

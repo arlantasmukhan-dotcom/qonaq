@@ -14,7 +14,7 @@ export default async function NewPage() {
   return (
     <main className="page">
       <header className="mb-5 flex items-center justify-between">
-        <Link href="/" className="text-lg font-extrabold text-teal">
+        <Link href="/" className="text-lg font-extrabold text-patina">
           Qonaq
         </Link>
         <LangSwitcher current={lang} langs={["kk", "ru"]} />

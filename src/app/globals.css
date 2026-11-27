@@ -1,29 +1,34 @@
 @import "tailwindcss";
 
 /*
- * Qonaq design tokens. Palette: Kolsai lake teal, steppe sand, saffron accent.
- * Use them in Tailwind as bg-teal, text-ink, border-line, etc.
+ * Qonaq design tokens. Palette after the Auyl restaurant in Medeu: limewash walls, undressed stone,
+ * fired clay, oxidised copper and charcoal. Dusty, quiet, natural; colour comes from the photos.
+ * Use them in Tailwind as bg-sand, text-ink, border-line, bg-clay, text-patina, etc.
  */
 @theme {
-  --color-ink: #13292b;
-  --color-muted: #5d6f70;
-  --color-teal: #0f5e63;
-  --color-teal-dark: #0b4447;
-  --color-teal-soft: #e3efee;
-  --color-sand: #f6efe4;
-  --color-paper: #fffdf9;
-  --color-line: #e3d8c8;
-  --color-saffron: #e8a33d;
-  --color-saffron-soft: #fbecd2;
-  --color-ok: #2f8f5b;
-  --color-ok-soft: #e1f2e8;
-  --color-busy: #b8432f;
-  --color-busy-soft: #f8e3de;
+  --color-ink: #2b2824; /* charcoal */
+  --color-muted: #776e64; /* weathered stone */
+  --color-sand: #e7e1d7; /* limewash, the page background */
+  --color-paper: #f2eee7; /* lighter plaster for raised surfaces */
+  --color-line: #cbc2b4; /* stone joint */
+  --color-stone: #b8ad9e;
+  --color-clay: #a0603f; /* fired clay, the action colour */
+  --color-clay-dark: #82492e;
+  --color-clay-soft: #ecdccd;
+  --color-dune: #d6b48c; /* light clay accent for text on dark surfaces */
+  --color-patina: #56695f; /* oxidised copper */
+  --color-patina-dark: #3e4d45;
+  --color-patina-soft: #dee3dc;
+  --color-ok: #57774b;
+  --color-ok-soft: #e1e7d8;
+  --color-busy: #a0442f;
+  --color-busy-soft: #f0ddd5;
 
-  --font-sans: var(--font-manrope), "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-sans: var(--font-onest), "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), "Songti SC", "Noto Serif SC", Georgia, serif;
 
-  --radius-card: 1.25rem;
-  --shadow-card: 0 1px 2px rgb(19 41 43 / 0.06), 0 8px 24px -12px rgb(19 41 43 / 0.18);
+  --radius-card: 0.375rem;
+  --shadow-card: 0 1px 0 rgb(43 40 36 / 0.04);
 }
 
 :root {
@@ -39,6 +44,46 @@ body {
 body {
   font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+/*
+ * Ornaments and petroglyphs cut from the reference art in /public/art/orn.
+ * They are masks, so they take the current text colour: `<span class="orn orn-rosette text-clay" />`.
+ */
+@layer components {
+  .orn {
+    display: block;
+    background-color: currentColor;
+    -webkit-mask: var(--orn) center / contain no-repeat;
+    mask: var(--orn) center / contain no-repeat;
+    pointer-events: none;
+  }
+  .orn-rosette { --orn: url("/art/orn/rosette.png"); aspect-ratio: 236 / 248; }
+  .orn-emblem { --orn: url("/art/orn/emblem.png"); aspect-ratio: 302 / 320; }
+  .orn-sun { --orn: url("/art/orn/pg-sun.png"); aspect-ratio: 103 / 105; }
+  .orn-sun-man { --orn: url("/art/orn/pg-sun-man.png"); aspect-ratio: 168 / 257; }
+  .orn-rider-flag { --orn: url("/art/orn/pg-rider-flag.png"); aspect-ratio: 121 / 109; }
+  .orn-rider-spear { --orn: url("/art/orn/pg-rider-spear.png"); aspect-ratio: 151 / 103; }
+  .orn-rider-sun { --orn: url("/art/orn/pg-rider-sun.png"); aspect-ratio: 153 / 112; }
+  .orn-elk { --orn: url("/art/orn/pg-elk.png"); aspect-ratio: 151 / 103; }
+  .orn-deer { --orn: url("/art/orn/pg-deer.png"); aspect-ratio: 94 / 92; }
+  .orn-ibex { --orn: url("/art/orn/pg-ibex.png"); aspect-ratio: 51 / 68; }
+
+  /* Vertical ornament bands that tile seamlessly. Give them a width; height follows the box. */
+  .orn-strip-vine,
+  .orn-strip-horn {
+    -webkit-mask: var(--orn) top center / 100% auto repeat-y;
+    mask: var(--orn) top center / 100% auto repeat-y;
+  }
+  .orn-strip-vine { --orn: url("/art/orn/strip-vine.png"); }
+  .orn-strip-horn { --orn: url("/art/orn/strip-horn.png"); }
 }
 
 /* Shared building blocks. Screens compose these instead of re-inventing buttons and cards. */
@@ -57,8 +102,9 @@ body {
     gap: 0.5rem;
     min-height: 3rem;
     padding: 0.75rem 1.25rem;
-    border-radius: 999px;
-    font-weight: 700;
+    border-radius: 0.25rem;
+    border: 1px solid transparent;
+    font-weight: 600;
     transition:
       transform 120ms ease,
       background-color 120ms ease,
@@ -66,57 +112,63 @@ body {
     user-select: none;
   }
   .btn:active {
-    transform: scale(0.97);
+    transform: scale(0.98);
   }
   .btn:disabled {
     opacity: 0.5;
     pointer-events: none;
   }
+  .btn:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+  }
   .btn-primary {
-    background: var(--color-teal);
-    color: #fff;
+    background: var(--color-ink);
+    color: var(--color-paper);
   }
   .btn-primary:hover {
-    background: var(--color-teal-dark);
+    background: #45403a;
   }
   .btn-accent {
-    background: var(--color-saffron);
-    color: var(--color-ink);
+    background: var(--color-clay);
+    color: #fbf8f3;
+  }
+  .btn-accent:hover {
+    background: var(--color-clay-dark);
   }
   .btn-ghost {
     background: transparent;
-    color: var(--color-teal);
-    border: 1.5px solid var(--color-line);
+    color: var(--color-ink);
+    border-color: var(--color-stone);
   }
   .btn-whatsapp {
     background: #25d366;
     color: #0b3b22;
   }
   .btn-xl {
-    min-height: 4rem;
-    font-size: 1.125rem;
-    border-radius: 1.25rem;
+    min-height: 3.75rem;
+    font-size: 1.0625rem;
   }
 
   .input {
     width: 100%;
     min-height: 3rem;
     padding: 0.75rem 1rem;
-    border-radius: 0.875rem;
-    border: 1.5px solid var(--color-line);
-    background: #fff;
+    border-radius: 0.25rem;
+    border: 1px solid var(--color-line);
+    background: #fbf9f5;
     font-size: 1rem;
     outline: none;
   }
   .input:focus {
-    border-color: var(--color-teal);
-    box-shadow: 0 0 0 3px rgb(15 94 99 / 0.15);
+    border-color: var(--color-patina);
+    box-shadow: 0 0 0 3px rgb(86 105 95 / 0.18);
   }
 
   .label {
     display: block;
     font-size: 0.8125rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--color-muted);
     margin-bottom: 0.375rem;
   }
@@ -125,12 +177,12 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.25rem;
     font-size: 0.8125rem;
     font-weight: 600;
-    background: var(--color-teal-soft);
-    color: var(--color-teal-dark);
+    background: var(--color-patina-soft);
+    color: var(--color-patina-dark);
   }
 
   /* Mobile-first page column with the 16px gutter. */
@@ -145,10 +197,10 @@ body {
 @keyframes qonaq-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgb(232 163 61 / 0.55);
+    box-shadow: 0 0 0 0 rgb(160 96 63 / 0.5);
   }
   50% {
-    box-shadow: 0 0 0 18px rgb(232 163 61 / 0);
+    box-shadow: 0 0 0 18px rgb(160 96 63 / 0);
   }
 }
 .animate-mic {

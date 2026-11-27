@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-const COLORS = ["#e8a33d", "#0f5e63", "#2f8f5b", "#fbecd2", "#e3efee"];
+const COLORS = ["#a0603f", "#56695f", "#d6b48c", "#ecdccd", "#2b2824"];
 
 /** Tasteful one-shot confetti. Pure CSS, disabled for reduced-motion users. */
 export function Confetti() {

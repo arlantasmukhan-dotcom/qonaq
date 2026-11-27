@@ -110,7 +110,7 @@ export function HostDashboard({
   const wa = `https://wa.me/?text=${encodeURIComponent(`${t.shareText} ${publicUrl}`)}`;
   const statusLabel = { new: t.statusNew, available: t.statusAvailable, busy: t.statusBusy } as const;
   const statusCls = {
-    new: "bg-saffron-soft text-ink",
+    new: "bg-clay-soft text-ink",
     available: "bg-ok-soft text-ok",
     busy: "bg-busy-soft text-busy",
   } as const;
@@ -127,7 +127,7 @@ export function HostDashboard({
       </div>
 
       {!published && (
-        <div className="mt-4 rounded-2xl bg-saffron-soft p-4">
+        <div className="mt-4 rounded-2xl bg-clay-soft p-4">
           <p className="font-bold">{t.draftNote}</p>
           <Link href={`/new/${listing.id}`} className="btn btn-accent mt-2 w-full">
             {t.finishCheck}
@@ -202,7 +202,7 @@ export function HostDashboard({
                   </span>
                   <span className="flex shrink-0 flex-col items-end gap-1">
                     <span className={`chip ${statusCls[r.status]}`}>{statusLabel[r.status]}</span>
-                    {awaitsHost(r) && <span className="chip bg-saffron text-ink">✉️ {t.newMessage}</span>}
+                    {awaitsHost(r) && <span className="chip bg-clay text-paper">✉️ {t.newMessage}</span>}
                   </span>
                 </Link>
               </li>
@@ -211,7 +211,7 @@ export function HostDashboard({
         )}
       </section>
 
-      <section className="mt-8 rounded-2xl border-2 border-dashed border-saffron bg-saffron-soft p-4">
+      <section className="mt-8 rounded-2xl border-2 border-dashed border-clay bg-clay-soft p-4">
         <h2 className="font-extrabold">🔑 {t.magicTitle}</h2>
         <p className="mt-1 text-sm text-ink/80">{t.magicText}</p>
         <p className="mt-2 break-all rounded-xl bg-white p-2 text-xs text-muted">{magic}</p>

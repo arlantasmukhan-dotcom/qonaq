@@ -10,11 +10,11 @@ import "./live.css";
 
 const langAttr = (l: Lang) => (l === "zh" ? "zh-CN" : l);
 
-function LangTag({ lang, tone = "light" }: { lang: Lang; tone?: "light" | "saffron" }) {
+function LangTag({ lang, tone = "light" }: { lang: Lang; tone?: "light" | "clay" }) {
   return (
     <span
       className={`inline-flex items-center rounded-full px-[0.7em] py-[0.15em] text-[0.55em] font-extrabold tracking-wide ${
-        tone === "saffron" ? "bg-saffron text-ink" : "bg-white/15 text-white"
+        tone === "clay" ? "bg-clay text-paper" : "bg-white/15 text-white"
       }`}
     >
       {LANG_SHORT[lang]}
@@ -25,9 +25,9 @@ function LangTag({ lang, tone = "light" }: { lang: Lang; tone?: "light" | "saffr
 /** The bridge between two texts: a glowing line with a pill in the middle. */
 function Bridge({ from, to }: { from: Lang; to: Lang }) {
   return (
-    <div className="my-[0.5em] flex items-center gap-3 text-[0.5em] font-bold text-saffron" aria-hidden>
+    <div className="my-[0.5em] flex items-center gap-3 text-[0.5em] font-bold text-dune" aria-hidden>
       <span className={`lv-beam h-[2px] flex-1 rounded`} />
-      <span className="rounded-full border border-saffron/50 px-3 py-0.5">
+      <span className="rounded-full border border-dune/50 px-3 py-0.5">
         {LANG_SHORT[from]} → {LANG_SHORT[to]}
       </span>
       <span className={`lv-beam h-[2px] flex-1 rounded`} />
@@ -44,7 +44,7 @@ export function RequestCard({ ev, fresh }: { ev: RequestView; fresh: boolean }) 
   return (
     <article className={`${SHELL} lv-card text-[clamp(1rem,1.9vw,2.2rem)]`}>
       <header className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.6em] font-bold text-white/70">
-        <span className="rounded-full bg-saffron px-3 py-0.5 text-ink">Новая заявка</span>
+        <span className="rounded-full bg-clay px-3 py-0.5 text-paper">Новая заявка</span>
         <span className="text-white">{ev.guestName}</span>
         <LangTag lang={ev.guestLang} />
         {ev.listingTitle ? <span className="min-w-0 truncate">→ {ev.listingTitle}</span> : null}
@@ -53,7 +53,7 @@ export function RequestCard({ ev, fresh }: { ev: RequestView; fresh: boolean }) 
         {original}
       </p>
       {bridged ? <Bridge from={ev.guestLang} to="ru" /> : <div className="h-[0.5em]" />}
-      <p lang="ru" className="min-h-[1.4em] text-[1.25em] font-extrabold leading-snug text-saffron">
+      <p lang="ru" className="min-h-[1.4em] text-[1.25em] font-extrabold leading-snug text-dune">
         <Typewriter text={ru} instant={!fresh} />
       </p>
     </article>
@@ -63,7 +63,7 @@ export function RequestCard({ ev, fresh }: { ev: RequestView; fresh: boolean }) 
 const ACTION_TONE = {
   available: "bg-ok text-white",
   busy: "bg-busy text-white",
-  car: "bg-saffron text-ink",
+  car: "bg-clay text-paper",
 } as const;
 
 export function ReplyCard({ ev, fresh }: { ev: ReplyView; fresh: boolean }) {
@@ -81,7 +81,7 @@ export function ReplyCard({ ev, fresh }: { ev: ReplyView; fresh: boolean }) {
         {ev.original}
       </p>
       <Bridge from="ru" to={ev.guestLang} />
-      <p lang={langAttr(ev.guestLang)} className="min-h-[1.4em] text-[1.25em] font-extrabold leading-snug text-saffron">
+      <p lang={langAttr(ev.guestLang)} className="min-h-[1.4em] text-[1.25em] font-extrabold leading-snug text-dune">
         <Typewriter text={text} instant={!fresh} />
       </p>
     </article>
@@ -113,7 +113,7 @@ export function ListingCard({ ev }: { ev: ListingView; fresh: boolean }) {
           {ev.priceKzt ? <span>{formatKzt(ev.priceKzt)}</span> : null}
         </header>
         <p key={lang} lang={langAttr(lang)} className={`lv-fade mt-[0.3em] flex items-center gap-3 text-[1.15em] font-extrabold leading-tight text-white`}>
-          <LangTag lang={lang} tone="saffron" />
+          <LangTag lang={lang} tone="clay" />
           <span className="min-w-0 truncate">{ev.titles[lang]}</span>
         </p>
         <p key={`v-${lang}`} lang={langAttr(lang)} className={`lv-fade mt-[0.15em] truncate text-[0.7em] font-semibold text-white/65`}>

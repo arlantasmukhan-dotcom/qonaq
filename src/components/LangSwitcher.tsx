@@ -46,7 +46,7 @@ export function LangSwitcher({
       role="group"
       aria-label="Language"
       className={`inline-flex rounded-full p-1 text-xs font-bold ${
-        tone === "dark" ? "bg-white/15 text-white" : "bg-paper border border-line text-muted"
+        tone === "dark" ? "bg-ink/30 text-paper backdrop-blur-sm" : "bg-paper border border-line text-muted"
       } ${pending ? "opacity-60" : ""}`}
     >
       {langs.map((l) => (
@@ -56,7 +56,7 @@ export function LangSwitcher({
           onClick={() => pick(l)}
           aria-pressed={l === current}
           className={`min-w-11 rounded-full px-2.5 py-1.5 transition-colors ${
-            l === current ? (tone === "dark" ? "bg-white text-teal-dark" : "bg-teal text-white") : ""
+            l === current ? (tone === "dark" ? "bg-paper text-ink" : "bg-ink text-paper") : ""
           }`}
         >
           {LANG_SHORT[l]}

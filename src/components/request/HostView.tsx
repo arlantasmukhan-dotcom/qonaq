@@ -65,7 +65,7 @@ export function HostView({
       ? "bg-ok-soft text-ok"
       : request.status === "busy"
         ? "bg-busy-soft text-busy"
-        : "bg-saffron-soft text-ink";
+        : "bg-clay-soft text-ink";
 
   async function reply(payload: { action: Action } | { text: string }) {
     if (busy) return;
@@ -111,7 +111,7 @@ export function HostView({
   return (
     <main className="page" lang={lang}>
       <div className="flex items-center justify-between gap-3 py-2">
-        <span className="text-lg font-extrabold tracking-tight text-teal">Qonaq</span>
+        <span className="text-lg font-extrabold tracking-tight text-patina">Qonaq</span>
         <LangSwitcher current={lang} langs={["kk", "ru"]} />
       </div>
 
@@ -131,12 +131,12 @@ export function HostView({
           <dt className="font-bold text-muted">{h.from}</dt>
           <dd className="text-right font-extrabold">{h.guests(request.guests)}</dd>
           <dt className="font-bold text-muted">{h.byPrice}</dt>
-          <dd className="text-right font-extrabold text-teal">
+          <dd className="text-right font-extrabold text-patina">
             {request.totalKzt ? formatKzt(request.totalKzt) : h.noPrice}
           </dd>
         </dl>
         {request.wantsCar && (
-          <p className="mt-3 rounded-xl bg-saffron-soft px-3 py-2 text-sm font-bold">🚗 {h.wantsCar}</p>
+          <p className="mt-3 rounded-xl bg-clay-soft px-3 py-2 text-sm font-bold">🚗 {h.wantsCar}</p>
         )}
         <p className={`mt-3 inline-flex rounded-full px-3 py-1 text-sm font-bold ${statusTone}`} aria-live="polite">
           {statusLabel}
@@ -264,7 +264,7 @@ function HostBubble({ m, lang }: { m: Message; lang: "ru" | "kk" }) {
       <span className="mb-1 px-1 text-xs font-bold text-muted">{mine ? h.youLabel : h.guestLabel}</span>
       <div
         className={`max-w-[92%] rounded-2xl px-4 py-3 ${
-          mine ? "rounded-br-md bg-teal text-white" : "rounded-bl-md border border-line bg-paper"
+          mine ? "rounded-br-md bg-patina text-white" : "rounded-bl-md border border-line bg-paper"
         }`}
       >
         <p className="whitespace-pre-line text-lg leading-relaxed">{shown}</p>

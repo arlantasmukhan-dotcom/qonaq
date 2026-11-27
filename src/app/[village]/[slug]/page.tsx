@@ -56,7 +56,7 @@ export default async function HousePage({ params }: Props) {
           <span id="offline-badge" data-offline-badge hidden className="chip bg-ok-soft text-ok">
             ✓ {t.offlineBadge}
           </span>
-          {listing.isDemo && <span className="chip bg-saffron-soft text-ink">{t.example}</span>}
+          {listing.isDemo && <span className="chip bg-clay-soft text-ink">{t.example}</span>}
         </div>
 
         <h1 className="text-3xl font-extrabold leading-tight tracking-tight">{c.title}</h1>
@@ -65,7 +65,7 @@ export default async function HousePage({ params }: Props) {
           <section className="card p-4" aria-label={t.priceTitle}>
             <p className="text-sm font-bold text-muted">{t.priceTitle}</p>
             <p className="mt-1 flex flex-wrap items-baseline gap-x-2">
-              <span className="text-4xl font-extrabold text-teal">{price.big}</span>
+              <span className="text-4xl font-extrabold text-patina">{price.big}</span>
               <span className="text-base font-semibold text-muted">{t.perNight}</span>
             </p>
             {price.small && <p className="text-sm text-muted">{price.small}</p>}
@@ -129,7 +129,7 @@ export default async function HousePage({ params }: Props) {
 
         <Link
           href={`/${village}/${slug}/driver`}
-          className="card flex min-h-16 items-center gap-3 bg-saffron-soft px-4 py-3 active:scale-[0.99]"
+          className="card flex min-h-16 items-center gap-3 bg-clay-soft px-4 py-3 active:scale-[0.99]"
         >
           <span aria-hidden className="text-3xl">
             🚕
@@ -138,7 +138,7 @@ export default async function HousePage({ params }: Props) {
             <span className="block font-extrabold">{t.showDriver}</span>
             <span className="block text-xs text-muted">{t.showDriverSub}</span>
           </span>
-          <span aria-hidden className="text-2xl text-teal">
+          <span aria-hidden className="text-2xl text-patina">
             ›
           </span>
         </Link>

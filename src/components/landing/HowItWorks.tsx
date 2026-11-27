@@ -1,45 +1,26 @@
 import type { LandingCopy } from "@/i18n/landing";
 
-const ICONS = [
-  // microphone
-  <svg key="mic" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-    <rect x="9" y="3" width="6" height="12" rx="3" />
-    <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
-  </svg>,
-  // qr
-  <svg key="qr" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-    <rect x="3" y="3" width="7" height="7" rx="1" />
-    <rect x="14" y="3" width="7" height="7" rx="1" />
-    <rect x="3" y="14" width="7" height="7" rx="1" />
-    <path d="M14 14h3v3h-3zM20 14v1M14 20h3M20 18v3" />
-  </svg>,
-  // chat with check
-  <svg key="chat" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-    <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z" />
-    <path d="m8.5 12 2.5 2.5L15.5 10" />
-  </svg>,
-];
-
+/** Three steps in order, with a rock-carved rider faintly in the corner. */
 export function HowItWorks({ t }: { t: LandingCopy }) {
   return (
-    <section aria-labelledby="how-title" className="mt-14">
-      <h2 id="how-title" className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-        {t.howTitle}
-      </h2>
-      <ol className="mt-5 grid list-none gap-3 p-0 md:grid-cols-3">
-        {t.steps.map((step, i) => (
-          <li key={step.title} className="card flex gap-4 p-4 md:flex-col md:p-5">
-            <span className="relative grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-teal-soft text-teal">
-              {ICONS[i]}
-              <span className="absolute -right-1.5 -top-1.5 grid h-6 w-6 place-items-center rounded-full bg-saffron text-xs font-extrabold text-ink">{i + 1}</span>
-            </span>
-            <div>
-              <h3 className="text-lg font-bold">{step.title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-muted">{step.text}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
+    <section aria-labelledby="how-title" className="relative overflow-hidden">
+      <span aria-hidden className="orn orn-rider-flag absolute right-4 top-8 h-24 text-stone/50 sm:right-10 sm:top-12 sm:h-36" />
+      <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+        <h2 id="how-title" className="text-4xl leading-[1.05] sm:text-5xl">
+          {t.howTitle}
+        </h2>
+        <ol className="mt-10 grid list-none gap-8 p-0 md:grid-cols-3 md:gap-10">
+          {t.steps.map((step, i) => (
+            <li key={step.title} className="border-t border-stone pt-5">
+              <span aria-hidden className="block font-serif text-5xl font-medium leading-none text-clay">
+                {i + 1}
+              </span>
+              <h3 className="mt-4 text-lg font-semibold">{step.title}</h3>
+              <p className="mt-2 max-w-sm leading-relaxed text-muted">{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
     </section>
   );
 }

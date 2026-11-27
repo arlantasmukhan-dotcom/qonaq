@@ -142,7 +142,7 @@ export function BookingForm({
       <p className="text-sm font-semibold leading-relaxed text-ink">
         {t.nights(nights)}
         {rooms > 1 ? ` × ${t.roomsMult(rooms)}` : ""} × {formatKzt(listing.priceKzt)} ={" "}
-        <span className="text-base font-extrabold text-teal">{formatKzt(total)}</span>
+        <span className="text-base font-extrabold text-patina">{formatKzt(total)}</span>
         {cur !== "KZT" && <span className="text-muted"> ({formatIn(total, cur)})</span>}
       </p>
     ) : null;
@@ -241,7 +241,7 @@ export function BookingForm({
             type="checkbox"
             checked={wantsCar}
             onChange={(e) => setWantsCar(e.target.checked)}
-            className="h-6 w-6 shrink-0 accent-[var(--color-teal)]"
+            className="h-6 w-6 shrink-0 accent-[var(--color-patina)]"
           />
           <span className="text-sm font-semibold">
             🚗 {t.carToggle(car.priceKzt ? formatKzt(car.priceKzt) : null)}
@@ -265,7 +265,7 @@ export function BookingForm({
       </div>
 
       {priceLine && (
-        <div className="rounded-2xl bg-teal-soft p-3" aria-live="polite">
+        <div className="rounded-2xl bg-patina-soft p-3" aria-live="polite">
           {priceLine}
           <p className="mt-0.5 text-xs text-muted">{t.totalNote}</p>
         </div>

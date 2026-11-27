@@ -125,12 +125,12 @@ export function PhotoPicker({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={it.preview} alt="" className="h-full w-full object-cover" />
             {idx === 0 && it.id && (
-              <span className="absolute bottom-1 left-1 rounded-full bg-saffron px-2 py-0.5 text-[10px] font-bold text-ink">★</span>
+              <span className="absolute bottom-1 left-1 rounded-full bg-clay px-2 py-0.5 text-[10px] font-bold text-paper">★</span>
             )}
             {!it.id && !it.error && (
               <div className="absolute inset-0 flex flex-col items-center justify-end bg-ink/35 p-2" role="status" aria-label={t.uploading}>
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/40">
-                  <div className="h-full bg-saffron transition-all" style={{ width: `${Math.max(8, it.progress * 100)}%` }} />
+                  <div className="h-full bg-clay transition-all" style={{ width: `${Math.max(8, it.progress * 100)}%` }} />
                 </div>
               </div>
             )}
@@ -151,7 +151,7 @@ export function PhotoPicker({
           <button
             type="button"
             onClick={() => input.current?.click()}
-            className="flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-line bg-paper text-teal"
+            className="flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-line bg-paper text-patina"
           >
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M4 8h3l1.5-2h7L17 8h3v11H4z" />

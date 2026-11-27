@@ -42,12 +42,12 @@ export function GuestView({ code, initial, lang }: { code: string; initial: Requ
       ? "bg-ok text-white"
       : status === "busy"
         ? "bg-busy text-white"
-        : "bg-saffron-soft text-ink border border-saffron/40";
+        : "bg-clay-soft text-ink border border-clay/40";
 
   return (
     <main className="page">
       <div className="flex items-center justify-between gap-3 py-2">
-        <Link href="/" className="inline-flex min-h-12 items-center text-lg font-extrabold tracking-tight text-teal">
+        <Link href="/" className="inline-flex min-h-12 items-center text-lg font-extrabold tracking-tight text-patina">
           Qonaq
         </Link>
         <LangSwitcher current={lang} via="query" />
@@ -67,8 +67,8 @@ export function GuestView({ code, initial, lang }: { code: string; initial: Requ
           <>
             <div className="mt-3 flex items-center gap-3">
               <span aria-hidden className="relative flex h-4 w-4 shrink-0">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-saffron opacity-70" />
-                <span className="relative inline-flex h-4 w-4 rounded-full bg-saffron" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-clay opacity-70" />
+                <span className="relative inline-flex h-4 w-4 rounded-full bg-clay" />
               </span>
               <h1 className="text-xl font-extrabold leading-snug">{t.waiting(host)}</h1>
             </div>
@@ -93,7 +93,7 @@ export function GuestView({ code, initial, lang }: { code: string; initial: Requ
       )}
 
       <section className="card mt-4 p-4" aria-label={t.summary}>
-        <Link href={`/${listing.village}/${listing.slug}`} className="block font-extrabold leading-snug text-teal">
+        <Link href={`/${listing.village}/${listing.slug}`} className="block font-extrabold leading-snug text-patina">
           {listing.content[lang].title}
         </Link>
         <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
@@ -167,7 +167,7 @@ function Bubble({ m, lang, host }: { m: Message; lang: Lang; host: string }) {
       <span className="mb-1 px-1 text-xs font-bold text-muted">{mine ? t.youLabel : t.hostLabel(host)}</span>
       <div
         className={`max-w-[88%] rounded-2xl px-4 py-3 leading-relaxed ${
-          mine ? "rounded-br-md bg-teal text-white" : "rounded-bl-md border border-line bg-paper"
+          mine ? "rounded-br-md bg-patina text-white" : "rounded-bl-md border border-line bg-paper"
         }`}
       >
         <p className="whitespace-pre-line">
@@ -180,7 +180,7 @@ function Bubble({ m, lang, host }: { m: Message; lang: Lang; host: string }) {
               type="button"
               onClick={() => setOpen((o) => !o)}
               aria-expanded={open}
-              className="mt-2 inline-flex min-h-8 items-center text-xs font-bold text-teal underline-offset-2"
+              className="mt-2 inline-flex min-h-8 items-center text-xs font-bold text-patina underline-offset-2"
             >
               {open ? t.hideOriginal : `${t.original} · ${LANG_NAME_IN[lang][m.lang]}`}
             </button>

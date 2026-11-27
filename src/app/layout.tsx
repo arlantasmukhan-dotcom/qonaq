@@ -1,12 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope } from "next/font/google";
+import { Cormorant_Garamond, Onest } from "next/font/google";
 import { OfflineKit } from "@/components/OfflineKit";
 import { getLang } from "@/i18n/server";
 import "./globals.css";
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+// Both families carry the full Kazakh alphabet (ә ғ қ ң ө ұ ү һ і) in their cyrillic-ext subset.
+const onest = Onest({
+  variable: "--font-onest",
   subsets: ["latin", "cyrillic", "cyrillic-ext"],
+  display: "swap",
+});
+
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
@@ -18,7 +26,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f5e63",
+  themeColor: "#2b2824",
   width: "device-width",
   initialScale: 1,
 };
@@ -26,7 +34,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const lang = await getLang();
   return (
-    <html lang={lang === "zh" ? "zh-CN" : lang} className={`${manrope.variable} h-full antialiased`}>
+    <html lang={lang === "zh" ? "zh-CN" : lang} className={`${onest.variable} ${cormorant.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <OfflineKit />
         {children}

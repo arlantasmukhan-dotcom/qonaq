@@ -37,7 +37,7 @@ function addLangs(prev: Lang[], more: Lang[]): Lang[] {
 function Counter({ value, ru, sub }: { value: number; ru: string; sub: string }) {
   return (
     <div className="min-w-0 flex-1 rounded-2xl border border-white/15 bg-white/[0.06] px-[clamp(0.7rem,1.2vw,1.4rem)] py-[clamp(0.5rem,1vw,1rem)]">
-      <p key={value} className={`lv-pop text-[clamp(2rem,4.2vw,5rem)] font-extrabold leading-none tabular-nums text-saffron`}>
+      <p key={value} className={`lv-pop text-[clamp(2rem,4.2vw,5rem)] font-extrabold leading-none tabular-nums text-dune`}>
         {value}
       </p>
       <p className="mt-1 truncate text-[clamp(0.8rem,1.15vw,1.4rem)] font-bold text-white">{ru}</p>
@@ -59,7 +59,7 @@ function Empty() {
         <p lang={g.lang === "zh" ? "zh-CN" : g.lang} className="text-[clamp(3rem,7.5vw,9rem)] font-extrabold leading-tight text-white">
           {g.text}
         </p>
-        <p lang={g.lang === "zh" ? "zh-CN" : g.lang} className="mx-auto mt-3 max-w-[40ch] text-[clamp(1rem,1.7vw,2.2rem)] font-semibold text-saffron">
+        <p lang={g.lang === "zh" ? "zh-CN" : g.lang} className="mx-auto mt-3 max-w-[40ch] text-[clamp(1rem,1.7vw,2.2rem)] font-semibold text-dune">
           {g.sub}
         </p>
       </div>

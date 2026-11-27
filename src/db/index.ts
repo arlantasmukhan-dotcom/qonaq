@@ -13,10 +13,12 @@ const globalForDb = globalThis as unknown as { qonaqDb?: { db: Db; client: Clien
 function init() {
   const url = process.env.DATABASE_URL ?? "file:./data/qonaq.db";
   // Serverless hosts have a read-only, per-request disk: a file database would lose every write.
-  if (process.env.VERCEL && url.startsWith("file:")) {
+  // Serverless hosts keep no disk between instances. Only an explicit /tmp file is allowed there, as a
+  // demo-only database that resets on every cold start (the demo houses are re-seeded); use Turso for real.
+  if (process.env.VERCEL && url.startsWith("file:") && !url.startsWith("file:/tmp/")) {
     throw new Error("DATABASE_URL must point to Turso (libsql://…) on Vercel; a local file database cannot persist there.");
   }
-  if (url.startsWith("file:")) mkdirSync("./data", { recursive: true });
+  if (url.startsWith("file:./")) mkdirSync("./data", { recursive: true });
   const client = createClient({ url, authToken: process.env.DATABASE_AUTH_TOKEN || undefined });
   const db = drizzle(client, { schema });
   const ready = (async () => {
